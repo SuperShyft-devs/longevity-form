@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Camp Registration</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/index_bio_ai_free.css') }}" rel="stylesheet">
     <link rel="icon" type="image/svg" href="{{ url_for('static', filename='assets/company-logo.svg') }}">
 </head>
 
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <form id="bookingForm" method="POST" action="/submit_booking" class="form-section">
+        <form id="bookingForm" method="POST" action="{{ url_for('bio_ai_free.submit_booking') }}" class="form-section">
             <div id="membersContainer">
                 <!-- Member 1 -->
                 <div class="member-section" data-member-id="1">
@@ -290,7 +290,7 @@
                 }
 
                 try {
-                    const response = await fetch(`/api/time_slots?date=${date}`);
+                    const response = await fetch(`{{ url_for('bio_ai_free.get_time_slots') }}?date=${date}`);
                     const data = await response.json();
 
                     if (data.success) {
@@ -881,7 +881,7 @@
             // Fetch minimum days ahead from config and make it global
             window.minimumDaysAhead = 2; // Default fallback
             try {
-                const configResponse = await fetch('/api/config/minimum_days_ahead');
+                const configResponse = await fetch('{{ url_for('bio_ai_free.get_minimum_days_ahead') }}');
                 if (configResponse.ok) {
                     const configData = await configResponse.json();
                     window.minimumDaysAhead = configData.minimum_days_ahead || 2;

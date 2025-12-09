@@ -1,0 +1,565 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    background: #000000;
+    color: #ffffff;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animated Background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(ellipse at 20% 30%, #0a3d2e 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, #1a5940 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 20%, #0f4a36 0%, transparent 45%),
+        radial-gradient(ellipse at 30% 80%, #235f4d 0%, transparent 40%);
+    animation: backgroundShift 15s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -3;
+}
+
+/* Floating animated elements */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 15% 15%, rgba(16, 75, 57, 0.4) 0%, transparent 25%),
+        radial-gradient(circle at 85% 85%, rgba(26, 89, 64, 0.3) 0%, transparent 30%),
+        radial-gradient(circle at 70% 30%, rgba(35, 95, 77, 0.2) 0%, transparent 35%),
+        radial-gradient(circle at 25% 75%, rgba(20, 65, 50, 0.3) 0%, transparent 28%);
+    animation: floatingElements 20s linear infinite;
+    pointer-events: none;
+    z-index: -2;
+}
+
+@keyframes backgroundShift {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        filter: hue-rotate(0deg);
+    }
+    25% {
+        transform: scale(1.1) rotate(1deg);
+        filter: hue-rotate(5deg);
+    }
+    50% {
+        transform: scale(1.05) rotate(-0.5deg);
+        filter: hue-rotate(-3deg);
+    }
+    75% {
+        transform: scale(1.08) rotate(0.8deg);
+        filter: hue-rotate(8deg);
+    }
+}
+
+@keyframes floatingElements {
+    0% {
+        transform: translateX(-10px) translateY(-10px) scale(1);
+        opacity: 0.3;
+    }
+    25% {
+        transform: translateX(15px) translateY(-5px) scale(1.05);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translateX(10px) translateY(20px) scale(0.98);
+        opacity: 0.35;
+    }
+    75% {
+        transform: translateX(-5px) translateY(15px) scale(1.02);
+        opacity: 0.4;
+    }
+    100% {
+        transform: translateX(-10px) translateY(-10px) scale(1);
+        opacity: 0.3;
+    }
+}
+
+@keyframes depthShift {
+    0%, 100% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 0.6;
+    }
+    33% {
+        transform: translateX(-20px) translateY(10px) scale(1.1);
+        opacity: 0.4;
+    }
+    66% {
+        transform: translateX(15px) translateY(-15px) scale(0.95);
+        opacity: 0.5;
+    }
+}
+
+/* Particle effect animation */
+.particle-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, rgba(82, 196, 176, 0.3), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(63, 168, 150, 0.2), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(45, 138, 122, 0.4), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(35, 95, 77, 0.3), transparent),
+        radial-gradient(2px 2px at 160px 30px, rgba(82, 196, 176, 0.2), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: particles 30s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.4;
+}
+
+@keyframes particles {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    100% {
+        transform: translateY(-100px) translateX(50px);
+    }
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Add the animated layer before container content */
+.container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(ellipse 800px 600px at 50% 0%, rgba(13, 60, 45, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse 600px 800px at 0% 50%, rgba(20, 75, 58, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse 700px 500px at 100% 100%, rgba(16, 68, 52, 0.12) 0%, transparent 50%);
+    animation: depthShift 25s ease-in-out infinite reverse;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 0 20px;
+}
+
+.nvidia-logo {
+    width: 80px;
+    height: auto;
+    filter: brightness(1.2) contrast(1.1);
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+/* Modern Glass Card Design */
+.success-card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 50px 40px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.success-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.success-icon {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #52c4b0 0%, #3fa896 50%, #2d8a7a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 35px;
+    color: #ffffff;
+    font-size: 36px;
+    box-shadow: 
+        0 8px 25px rgba(82, 196, 176, 0.3),
+        0 0 0 8px rgba(82, 196, 176, 0.1);
+    position: relative;
+    animation: successPulse 2s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 
+            0 8px 25px rgba(82, 196, 176, 0.3),
+            0 0 0 8px rgba(82, 196, 176, 0.1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 
+            0 12px 35px rgba(82, 196, 176, 0.4),
+            0 0 0 12px rgba(82, 196, 176, 0.15);
+    }
+}
+
+.success-title {
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 400;
+    color: #ffffff;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.booking-id {
+    font-size: 18px;
+    color: #52c4b0;
+    margin-bottom: 40px;
+    font-weight: 500;
+    background: rgba(82, 196, 176, 0.1);
+    padding: 12px 24px;
+    border-radius: 12px;
+    display: inline-block;
+    border: 1px solid rgba(82, 196, 176, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.booking-id strong {
+    color: #52c4b0;
+    font-weight: 600;
+}
+
+.booking-details {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 35px;
+    margin: 35px 0;
+    text-align: left;
+    backdrop-filter: blur(15px);
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #52c4b0, #3fa896);
+    border-radius: 2px;
+}
+
+.section-title i {
+    font-size: 20px;
+    color: #52c4b0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.detail-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-left: -12px;
+    margin-right: -12px;
+    border-radius: 8px;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
+
+.detail-value {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.important-note {
+    background: rgba(82, 196, 176, 0.1);
+    border: 1px solid rgba(82, 196, 176, 0.2);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 35px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    text-align: left;
+    backdrop-filter: blur(15px);
+    position: relative;
+}
+
+.important-note::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(82, 196, 176, 0.3), transparent);
+}
+
+.important-note i {
+    color: #52c4b0;
+    font-size: 22px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    animation: noteIcon 3s ease-in-out infinite;
+}
+
+@keyframes noteIcon {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.note-content {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.note-content strong {
+    color: #52c4b0;
+    font-weight: 600;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 45px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 18px 32px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+    min-width: 190px;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #52c4b0 0%, #3fa896 50%, #2d8a7a 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(82, 196, 176, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(82, 196, 176, 0.4);
+    background: linear-gradient(135deg, #5dd4c4 0%, #52c4b0 50%, #3fa896 100%);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: rgba(82, 196, 176, 0.15);
+    border-color: #52c4b0;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(82, 196, 176, 0.2);
+    color: #52c4b0;
+}
+
+.btn i {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover i {
+    transform: translateX(2px);
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    .container {
+        padding: 16px;
+    }
+    
+    .success-card {
+        padding: 40px 30px;
+        margin: 0 8px;
+    }
+    
+    .success-title {
+        font-size: 28px;
+    }
+    
+    .booking-details {
+        padding: 28px 24px;
+    }
+    
+    .action-buttons {
+        gap: 16px;
+    }
+    
+    .important-note {
+        padding: 24px 20px;
+    }
+
+    .header {
+        padding: 30px 0 15px;
+    }
+}
+
+@media (max-width: 640px) {
+    .success-card {
+        padding: 35px 24px;
+        border-radius: 16px;
+    }
+    
+    .success-icon {
+        width: 75px;
+        height: 75px;
+        font-size: 30px;
+        margin-bottom: 25px;
+    }
+    
+    .success-title {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+    
+    .booking-id {
+        font-size: 16px;
+        padding: 10px 20px;
+        margin-bottom: 30px;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 18px 0;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        min-width: auto;
+    }
+    
+    .nvidia-logo {
+        width: 60px;
+    }
+    
+    .important-note {
+        padding: 20px 16px;
+        gap: 14px;
+    }
+    
+    .booking-details {
+        padding: 24px 20px;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+
+    .header {
+        padding: 25px 0 10px;
+        margin-bottom: 30px;
+    }
+}
