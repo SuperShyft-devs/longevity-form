@@ -266,6 +266,21 @@
             </div>
         </div>
 
+        <div class="filters">
+            <h3>⚙️ Form Configuration</h3>
+            <div class="filter-buttons">
+                <a href="{{ url_for('bio_ai.admin_config') }}" class="filter-btn" style="background: #FFD700; color: #333; border-color: #FFD700;">
+                    🔬 Bio AI Premium Config
+                </a>
+                <a href="{{ url_for('bio_ai_free.admin_config') }}" class="filter-btn" style="background: #3498db; color: white; border-color: #3498db;">
+                    🆓 Bio AI Free Config
+                </a>
+                <a href="{{ url_for('camp.admin_config') }}" class="filter-btn" style="background: #2ecc71; color: white; border-color: #2ecc71;">
+                    ⛺ Camp Config
+                </a>
+            </div>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
                 <h3>{{ bookings|length }}</h3>

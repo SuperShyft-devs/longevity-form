@@ -264,7 +264,7 @@
                 timeSlotInput.value = '';
 
                 try {
-                    const response = await fetch(`/api/time_slots?date=${date}`);
+                    const response = await fetch(`{{ url_for('bio_ai.get_time_slots') }}?date=${date}`);
                     const data = await response.json();
 
                     if (data.success) {
@@ -375,7 +375,7 @@
             // Fetch minimum days ahead from config
             let minimumDaysAhead = 2; // Default fallback
             try {
-                const configResponse = await fetch('/api/config/minimum_days_ahead');
+                const configResponse = await fetch('{{ url_for('bio_ai.get_minimum_days_ahead') }}');
                 if (configResponse.ok) {
                     const configData = await configResponse.json();
                     minimumDaysAhead = configData.minimum_days_ahead || 2;

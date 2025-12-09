@@ -610,6 +610,7 @@
             // Initialize date picker for new member
             datePickers[memberCount] = new DatePicker(`appointment_date_${memberCount}`, `appointment_date_display_${memberCount}`, `datePicker_${memberCount}`, memberCount);
             datePickers[memberCount].minimumDaysAhead = window.minimumDaysAhead || 2;
+            datePickers[memberCount].render(); // Re-render with updated minimum days ahead
 
             // Show the same address question for the new member
             document.getElementById(`same_address_${memberCount}`).style.display = 'block';
@@ -893,6 +894,7 @@
             // Initialize date picker for member 1
             datePickers[1] = new DatePicker('appointment_date_1', 'appointment_date_display_1', 'datePicker_1', 1);
             datePickers[1].minimumDaysAhead = window.minimumDaysAhead || 2;
+            datePickers[1].render(); // Re-render with updated minimum days ahead
 
             const submitBtn = document.getElementById('submitBtn');
             const bookingForm = document.getElementById('bookingForm');

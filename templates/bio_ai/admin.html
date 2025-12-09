@@ -23,7 +23,7 @@
             <div
                 style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex: 1 1 auto; justify-content: flex-end; min-width: 250px; margin-top: 8px;">
 
-                <a href="/admin/config" class="btn"
+                <a href="{{ url_for('bio_ai.admin_config') }}" class="btn"
                     style="display: flex; align-items: center; background-color: #007bff; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none; font-size: 0.95rem;">
                     <i class="fas fa-cog" style="margin-right: 8px;"></i>Config
                 </a>
@@ -33,7 +33,7 @@
                     <i class="fas fa-file-excel" style="margin-right: 8px;"></i>Export Excel
                 </button>
 
-                <a href="/admin/logout" class="btn btn-secondary"
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-secondary"
                     style="display: flex; align-items: center; background-color: #6c757d; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none; font-size: 0.95rem;">
                     <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout
                 </a>

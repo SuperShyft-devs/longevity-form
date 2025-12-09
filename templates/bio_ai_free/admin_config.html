@@ -495,7 +495,7 @@
         <div class="danger-zone">
             <h5><i class="fas fa-exclamation-triangle"></i> Danger Zone</h5>
             <p>This will reset all configuration to default values. This action cannot be undone.</p>
-            <form method="POST" action="/admin/config/reset" style="display: inline;">
+            <form method="POST" action="{{ url_for('bio_ai_free.reset_config') }}" style="display: inline;">
                 <button type="submit" class="btn btn-danger"
                     onclick="return confirm('Are you sure you want to reset all configuration to defaults? This cannot be undone.')">
                     <i class="fas fa-undo"></i> Reset to Defaults
@@ -744,7 +744,7 @@
             resultDiv.innerHTML = '<div style="color: #666;"><i class="fas fa-clock"></i> Testing email configuration...</div>';
             
             try {
-                const response = await fetch('/admin/config/test-email', {
+                const response = await fetch('{{ url_for('bio_ai_free.test_email') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -792,7 +792,7 @@
         // Recipient Email Management Functions
         async function loadRecipientEmails() {
             try {
-                const response = await fetch('/admin/config/recipient-emails');
+                const response = await fetch('{{ url_for('bio_ai_free.manage_recipient_emails') }}');
                 const data = await response.json();
                 
                 if (data.success) {
@@ -838,7 +838,7 @@
             }
             
             try {
-                const response = await fetch('/admin/config/recipient-emails', {
+                const response = await fetch('{{ url_for('bio_ai_free.manage_recipient_emails') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -877,7 +877,7 @@
             }
             
             try {
-                const response = await fetch('/admin/config/recipient-emails', {
+                const response = await fetch('{{ url_for('bio_ai_free.manage_recipient_emails') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -906,7 +906,7 @@
             }
             
             try {
-                const response = await fetch('/admin/config/recipient-emails', {
+                const response = await fetch('{{ url_for('bio_ai_free.manage_recipient_emails') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
