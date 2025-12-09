@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Longevity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            padding: 50px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .error-container h1 {
+            color: #e74c3c;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .error-container p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .error-message {
+            background: #fee;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+            margin-bottom: 30px;
+            color: #c33;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-home:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 30px;
+            }
+
+            .error-icon {
+                font-size: 3em;
+            }
+
+            .error-container h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1>Oops! Something went wrong</h1>
+        <p>We encountered an error while processing your request.</p>
+        
+        {% if error %}
+        <div class="error-message">
+            <strong>Error Details:</strong><br>
+            {{ error }}
+        </div>
+        {% elif message %}
+        <div class="error-message">
+            <strong>Error Details:</strong><br>
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <a href="/" class="btn-home">← Back to Home</a>
+    </div>
+</body>
+</html>

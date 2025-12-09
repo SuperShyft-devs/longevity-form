@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/admin.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/svg" href="{{ url_for('static', filename='assets/company-logo.svg') }}">
+    <!-- SheetJS library for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header"
+            style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 15px; background: #f8f9fa; border-bottom: 1px solid #ddd;">
+            <h1
+                style="display: flex; align-items: center; font-size: 1.8rem; margin: 0; color: #333; flex: 1 1 auto; min-width: 200px;">
+                <i class="fas fa-chart-bar" style="margin-right: 12px;"></i>Admin Panel
+            </h1>
+            <div
+                style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex: 1 1 auto; justify-content: flex-end; min-width: 250px; margin-top: 8px;">
+
+                <a href="/admin/config" class="btn"
+                    style="display: flex; align-items: center; background-color: #007bff; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none; font-size: 0.95rem;">
+                    <i class="fas fa-cog" style="margin-right: 8px;"></i>Config
+                </a>
+
+                <button class="btn btn-success export-btn" onclick="exportToExcel()"
+                    style="display: flex; align-items: center; background-color: #28a745; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 0.95rem;">
+                    <i class="fas fa-file-excel" style="margin-right: 8px;"></i>Export Excel
+                </button>
+
+                <a href="/admin/logout" class="btn btn-secondary"
+                    style="display: flex; align-items: center; background-color: #6c757d; color: white; padding: 8px 14px; border-radius: 5px; text-decoration: none; font-size: 0.95rem;">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout
+                </a>
+            </div>
+        </div>
+
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalBookings">{{ bookings|length }}</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number" id="todayBookings">0</div>
+                <div class="stat-label">Today's Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="maleCount">{{ bookings|selectattr('gender', 'equalto', 'M')|list|length }}
+                </div>
+                <div class="stat-label">Male</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="femaleCount">{{ bookings|selectattr('gender', 'equalto', 'F')|list|length
+                    }}</div>
+                <div class="stat-label">Female</div>
+            </div>
+        </div>
+
+        <div class="search-filters">
+            <div class="filters-grid">
+                <div class="form-group">
+                    <label for="searchName">Search Name/Email/Phone</label>
+                    <input type="text" id="searchName" placeholder="Type to search...">
+                </div>
+                <div class="form-group">
+                    <label for="filterGender">Gender</label>
+                    <select id="filterGender">
+                        <option value="">All Genders</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-actions">
+                <button class="btn" onclick="applyFilters()">
+                    <i class="fas fa-search" style="margin-right: 8px;"></i>
+                    Apply Filters
+                </button>
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                    <i class="fas fa-times" style="margin-right: 8px;"></i>
+                    Clear
+                </button>
+                <div class="results-info" id="resultsInfo" style="display: none;">
+                    <span id="resultsCount">0 results found</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bookings-section">
+            <div class="section-title">All Bookings</div>
+
+            {% if bookings %}
+            <div class="results-info">
+                <span>Showing <strong id="displayedCount">{{ bookings|length }}</strong> of <strong>{{ bookings|length
+                        }}</strong> bookings</span>
+                <span>Last updated: <strong id="lastUpdated"></strong></span>
+            </div>
+            <div class="table-container">
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Phone</th>
+                            <th>Doctor Consultation</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        {% for booking in bookings %}
+                        <tr data-booking='{{ booking|tojson|safe }}'>
+                            <td><span class="booking-id">#{{ booking.id }}</span></td>
+                            <td><strong>{{ booking.first_name }}</strong></td>
+                            <td><strong>{{ booking.last_name }}</strong></td>
+                            <td>{{ booking.email }}</td>
+                            <td>{{ booking.age }}</td>
+                            <td>
+                                <span class="gender-badge {{ booking.gender }}">
+                                    {% if booking.gender == 'M' %}Male
+                                    {% elif booking.gender == 'F' %}Female
+                                    {% else %}{{ booking.gender }}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>{{ booking.phone }}</td>
+                            <td>{{ booking.doctor_consultation }}</td>
+                            <td>
+                                {% if booking.created_at %}
+                                {{ booking.created_at[:16] }}
+                                {% else %}
+                                <span class="no-data">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="/admin/delete_booking/{{ booking.id }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to delete this booking for {{ booking.first_name }} {{ booking.last_name }}?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No bookings yet</h3>
+                <p>When people start booking appointments, they'll appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        
+        .no-data {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+        
+        .gender-badge.M {
+            background-color: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .gender-badge.F {
+            background-color: #e83e8c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .gender-badge.Other {
+            background-color: #6c757d;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+    </style>
+
+    <script>
+        let allBookings = [];
+        let filteredBookings = [];
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Get all bookings data
+            const rows = document.querySelectorAll('#bookingsTableBody tr');
+            
+            rows.forEach(row => {
+                const bookingData = JSON.parse(row.getAttribute('data-booking'));
+                allBookings.push(bookingData);
+            });
+
+            filteredBookings = [...allBookings];
+
+            updateLastUpdated();
+            calculateTodayBookings();
+
+            // Add real-time search
+            document.getElementById('searchName').addEventListener('input', applyFilters);
+        });
+
+        function applyFilters() {
+            const searchName = document.getElementById('searchName').value.toLowerCase();
+            const filterGender = document.getElementById('filterGender').value;
+
+            filteredBookings = allBookings.filter(booking => {
+                // Search in name, email, phone
+                const searchText = `${booking.first_name} ${booking.last_name} ${booking.email} ${booking.phone}`.toLowerCase();
+                const matchesSearch = !searchName || searchText.includes(searchName);
+
+                // Gender filter
+                const matchesGender = !filterGender || booking.gender === filterGender;
+
+                return matchesSearch && matchesGender;
+            });
+
+            updateTable();
+            updateStats();
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+
+            filteredBookings.forEach(booking => {
+                const row = createTableRow(booking);
+                tbody.appendChild(row);
+            });
+
+            // Update results count
+            document.getElementById('displayedCount').textContent = filteredBookings.length;
+
+            // Show results info
+            const resultsInfo = document.getElementById('resultsInfo');
+            const resultsCount = document.getElementById('resultsCount');
+            if (filteredBookings.length !== allBookings.length) {
+                resultsCount.textContent = `${filteredBookings.length} of ${allBookings.length} results`;
+                resultsInfo.style.display = 'block';
+            } else {
+                resultsInfo.style.display = 'none';
+            }
+        }
+
+        function createTableRow(booking) {
+            const row = document.createElement('tr');
+
+            const genderDisplay = booking.gender === 'M' ? 'Male' : booking.gender === 'F' ? 'Female' : booking.gender;
+            const genderClass = booking.gender || '';
+            const createdAt = booking.created_at ? booking.created_at.substring(0, 16) : '<span class="no-data">-</span>';
+
+            row.innerHTML = `
+                <td><span class="booking-id">#${booking.id}</span></td>
+                <td><strong>${booking.first_name}</strong></td>
+                <td><strong>${booking.last_name}</strong></td>
+                <td>${booking.email}</td>
+                <td>${booking.age}</td>
+                <td><span class="gender-badge ${genderClass}">${genderDisplay}</span></td>
+                <td>${booking.phone}</td>
+                <td>${booking.doctor_consultation}</td>
+                <td>${createdAt}</td>
+                <td>
+                    <form method="POST" action="/admin/delete_booking/${booking.id}" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this booking for ${booking.first_name} ${booking.last_name}?')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </td>
+            `;
+
+            return row;
+        }
+
+        function updateStats() {
+            document.getElementById('totalBookings').textContent = filteredBookings.length;
+
+            const maleCount = filteredBookings.filter(b => b.gender === 'M').length;
+            document.getElementById('maleCount').textContent = maleCount;
+
+            const femaleCount = filteredBookings.filter(b => b.gender === 'F').length;
+            document.getElementById('femaleCount').textContent = femaleCount;
+        }
+
+        function clearFilters() {
+            document.getElementById('searchName').value = '';
+            document.getElementById('filterGender').value = '';
+
+            filteredBookings = [...allBookings];
+            updateTable();
+            updateStats();
+        }
+
+        function calculateTodayBookings() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayBookings = allBookings.filter(booking => {
+                if (booking.created_at) {
+                    const bookingDate = booking.created_at.split(' ')[0];
+                    return bookingDate === today;
+                }
+                return false;
+            }).length;
+            document.getElementById('todayBookings').textContent = todayBookings;
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('lastUpdated').textContent = timeString;
+        }
+
+        function exportToExcel() {
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+
+            // Define headers based on actual data structure
+            const headers = [
+                'ID', 'First Name', 'Last Name', 'Email', 'Age', 'Gender', 'Phone',
+                'Doctor Consultation', 'Created At'
+            ];
+
+            // Prepare data with headers
+            const data = [headers];
+
+            // Add booking data
+            filteredBookings.forEach(booking => {
+                const genderDisplay = booking.gender === 'M' ? 'Male' : booking.gender === 'F' ? 'Female' : booking.gender;
+                
+                const row = [
+                    booking.id,
+                    booking.first_name,
+                    booking.last_name,
+                    booking.email,
+                    booking.age,
+                    genderDisplay,
+                    booking.phone,
+                    booking.doctor_consultation,
+                    booking.created_at || ''
+                ];
+                data.push(row);
+            });
+
+            // Create worksheet from data
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            // Set column widths for better formatting
+            const colWidths = [
+                { wch: 8 },   // ID
+                { wch: 15 },  // First Name
+                { wch: 15 },  // Last Name
+                { wch: 25 },  // Email
+                { wch: 8 },   // Age
+                { wch: 10 },  // Gender
+                { wch: 15 },  // Phone
+                { wch: 15 },  // Doctor Consultation
+                { wch: 18 }   // Created At
+            ];
+            ws['!cols'] = colWidths;
+
+            // Style the header row
+            const headerStyle = {
+                font: { bold: true, color: { rgb: "FFFFFF" } },
+                fill: { fgColor: { rgb: "4472C4" } },
+                alignment: { horizontal: "center", vertical: "center" }
+            };
+
+            // Apply header styling
+            for (let i = 0; i < headers.length; i++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: 0, c: i });
+                if (!ws[cellAddress]) continue;
+                ws[cellAddress].s = headerStyle;
+            }
+
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Bookings");
+
+            // Generate filename with current date
+            const today = new Date().toISOString().split('T')[0];
+            const filename = `fitnastic-health-camp-bookings-${today}.xlsx`;
+
+            // Save the file
+            XLSX.writeFile(wb, filename);
+
+            // Show success message
+            console.log(`Excel file exported: ${filename}`);
+        }
+
+        // Refresh data every 30 seconds
+        setInterval(() => {
+            updateLastUpdated();
+        }, 30000);
+    </script>
+</body>
+
+</html>

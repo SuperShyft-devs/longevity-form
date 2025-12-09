@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Configuration - Supershyft Health Camp</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/admin.css') }}" rel="stylesheet">
+    <style>
+        .config-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8e8e8;
+        }
+
+        .config-section h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #007AFF;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .config-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .config-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .array-input {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .array-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .btn-add-item {
+            background: #28a745;
+            padding: 12px 12px;
+            font-size: 12px;
+        }
+
+        .btn-remove-item {
+            background: #dc3545;
+            padding: 4px 8px;
+            font-size: 10px;
+            min-width: auto;
+        }
+
+        .btn-remove-item:hover {
+            background: #c82333;
+        }
+
+        .date-cabin-config {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .date-cabin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .cabin-names-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .cabin-name-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 8px;
+        }
+
+        .cabin-name-input label {
+            font-size: 12px;
+            color: #6c757d;
+            margin: 0;
+            min-width: 50px;
+        }
+
+        .cabin-name-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .danger-zone {
+            background: white;
+            border: 2px solid #dc3545;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .danger-zone h5 {
+            color: #dc3545;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .danger-zone p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .btn-lg {
+            padding: 12px 24px;
+            font-size: 14px;
+        }
+
+        .alert {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-dismissible {
+            position: relative;
+            padding-right: 40px;
+        }
+
+        .btn-close {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+
+        .info-alert {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+            border-left: 4px solid #2196f3;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+
+            .config-grid,
+            .config-grid-2,
+            .config-grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                justify-content: center;
+            }
+
+            .danger-zone {
+                text-align: center;
+            }
+        }
+
+        /* Add these CSS styles to the <style> section in admin_config.html */
+
+        .cabin-configs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .cabin-config-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .cabin-config-header {
+            font-weight: 600;
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 8px;
+            text-align: center;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .cabin-config-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cabin-config-inputs .form-group {
+            margin-bottom: 0;
+        }
+
+        .cabin-config-inputs label {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cabin-config-inputs input {
+            font-size: 13px;
+            padding: 6px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+        }
+
+        .cabin-config-inputs input:focus {
+            border-color: #007AFF;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header matching admin.html style -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-sliders-h" style="margin-right: 12px;"></i>System Configuration
+            </h1>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <a href="/admin" class="btn">
+                    <i class="fas fa-chart-bar" style="margin-right: 8px;"></i>Admin Panel
+                </a>
+                <a href="/admin/logout" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-dismissible">
+            <i class="fas fa-check-circle"></i> {{ message }}
+            <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'">&times;</button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <form method="POST" id="configForm">
+
+            <!-- Date Configuration Section -->
+            <div class="config-section">
+                <h4><i class="fas fa-calendar-check"></i> Date Configuration</h4>
+                <div class="config-grid-2">
+                    <div class="form-group">
+                        <label>Minimum Days Ahead</label>
+                        <input type="number" name="minimum_days_ahead" value="{{ config.get('minimum_days_ahead', 2) }}"
+                            min="0" max="30" required>
+                        <small style="color: #666; font-size: 12px;">Minimum number of days in advance users can book
+                            appointments (e.g., 2 means users can only select dates 2 days from today onwards)</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Slot Configuration Section -->
+            <div class="config-section">
+                <h4><i class="fas fa-clock"></i> Time Slot Configuration</h4>
+                <div class="config-grid-2">
+                    <div class="form-group">
+                        <label>Start Time (24-hour format)</label>
+                        <input type="time" name="slot_start_time" value="{{ config.get('slot_start_time', '06:00') }}"
+                            required>
+                        <small style="color: #666; font-size: 12px;">First time slot starts at this time</small>
+                    </div>
+                    <div class="form-group">
+                        <label>End Time (24-hour format)</label>
+                        <input type="time" name="slot_end_time" value="{{ config.get('slot_end_time', '13:00') }}"
+                            required>
+                        <small style="color: #666; font-size: 12px;">Last time slot ends at this time</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Slot Duration (minutes)</label>
+                        <input type="number" name="slot_duration" value="{{ config.get('slot_duration', 60) }}" min="15"
+                            max="240" step="15" required>
+                        <small style="color: #666; font-size: 12px;">Duration of each time slot in minutes</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Max People per Slot</label>
+                        <input type="number" name="max_people_per_slot"
+                            value="{{ config.get('max_people_per_slot', 2) }}" min="1" max="10" required>
+                        <small style="color: #666; font-size: 12px;">Maximum number of people allowed per time
+                            slot</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Configuration Section -->
+            <div class="config-section">
+                <h4><i class="fas fa-key"></i> Metsights API Configuration</h4>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                        <input type="checkbox" id="api_enabled" name="api_enabled" value="true" {% if
+                            config.get('api_enabled', True) %}checked{% endif %} style="width: auto; margin: 0;">
+                        Enable API Integration
+                    </label>
+                    <small style="color: #666; font-size: 12px;">When disabled, API calls will be skipped during booking
+                        submission</small>
+                </div>
+                <div class="config-grid" id="api-config-fields">
+                    <div class="form-group">
+                        <label>Metsights API Key (Male)</label>
+                        <input type="text" name="metsights_api_key_male"
+                            value="{{ config.get('metsights_api_key_male', '') }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Metsights API Key (Female)</label>
+                        <input type="text" name="metsights_api_key_female"
+                            value="{{ config.get('metsights_api_key_female', '') }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Engagement ID (Male)</label>
+                        <input type="text" name="engagement_id_male" value="{{ config.get('engagement_id_male', '') }}"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Engagement ID (Female)</label>
+                        <input type="text" name="engagement_id_female"
+                            value="{{ config.get('engagement_id_female', '') }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reference Dropdown Configuration Section -->
+            <div class="config-section">
+                <h4><i class="fas fa-list"></i> Reference Dropdown Configuration</h4>
+                <div class="form-group">
+                    <label>Current Reference Options</label>
+                    <div id="referenceOptions" style="margin-bottom: 16px;">
+                        <!-- Options will be loaded here -->
+                    </div>
+
+                    <div class="config-grid-2" style="margin-top: 16px;">
+                        <div class="form-group">
+                            <label>Add New Option</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="newReferenceValue" placeholder="Enter new reference value"
+                                    style="flex: 1;">
+                                <button type="button" class="btn btn-add-item" onclick="addReferenceOption()">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reference API Configuration Subsection -->
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e8e8e8;">
+                    <h5 style="font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-key"></i> Reference API Configuration
+                    </h5>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                            <input type="checkbox" id="reference_api_enabled" name="reference_api_enabled" value="true" {% if
+                                config.get('reference_api_enabled', False) %}checked{% endif %} style="width: auto; margin: 0;">
+                            Enable Reference API Integration
+                        </label>
+                        <small style="color: #666; font-size: 12px;">When enabled, API calls will be made for specific reference options during booking submission</small>
+                    </div>
+                    <div class="config-grid" id="reference-api-config-fields">
+                        <div class="form-group">
+                            <label>Reference Metsights API Key (Male)</label>
+                            <input type="text" name="reference_metsights_api_key_male"
+                                value="{{ config.get('reference_metsights_api_key_male', '') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Reference Metsights API Key (Female)</label>
+                            <input type="text" name="reference_metsights_api_key_female"
+                                value="{{ config.get('reference_metsights_api_key_female', '') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Reference Engagement ID (Male)</label>
+                            <input type="text" name="reference_engagement_id_male" value="{{ config.get('reference_engagement_id_male', '') }}"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Reference Engagement ID (Female)</label>
+                            <input type="text" name="reference_engagement_id_female"
+                                value="{{ config.get('reference_engagement_id_female', '') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Trigger Options (comma-separated)</label>
+                            <input type="text" name="reference_api_trigger_options"
+                                value="{{ config.get('reference_api_trigger_options', []) | join(', ') }}"
+                                placeholder="e.g., D, Option1, Option2" required>
+                            <small style="color: #666; font-size: 12px;">Comma-separated list of reference options that will trigger the API call</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Configuration Section -->
+            <div class="config-section">
+                <h4><i class="fas fa-envelope"></i> Email Configuration</h4>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                        <input type="checkbox" id="email_enabled" name="email_enabled" value="true" {% if
+                            config.get('email_enabled', True) %}checked{% endif %} style="width: auto; margin: 0;"
+                            onchange="toggleEmailFields()">
+                        Enable Email Notifications
+                    </label>
+                    <small style="color: #666; font-size: 12px;">Send email notifications to admin when new bookings are submitted</small>
+                </div>
+                <div class="config-grid" id="email-config-fields">
+                    <div class="form-group">
+                        <label>SMTP Server</label>
+                        <input type="text" name="smtp_server" value="{{ config.get('smtp_server', 'smtp.gmail.com') }}" required>
+                        <small style="color: #666; font-size: 12px;">SMTP server for sending emails</small>
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP Port</label>
+                        <input type="number" name="smtp_port" value="{{ config.get('smtp_port', 587) }}" required>
+                        <small style="color: #666; font-size: 12px;">Usually 587 for TLS or 465 for SSL</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Sender Email</label>
+                        <input type="email" name="sender_email" value="{{ config.get('sender_email', 'pratheek.codimai@gmail.com') }}" required>
+                        <small style="color: #666; font-size: 12px;">Email address to send from</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Sender Password (App Password)</label>
+                        <input type="password" name="sender_password" value="{{ config.get('sender_password', '') }}" 
+                               placeholder="Enter Gmail App Password">
+                        <small style="color: #666; font-size: 12px;">
+                            For Gmail, use App Password. <a href="https://support.google.com/accounts/answer/185833" target="_blank">Learn how</a>
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Recipient Emails (Admin)</label>
+                        <div id="recipientEmails" style="margin-bottom: 16px;">
+                            <!-- Email list will be loaded here -->
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 16px;">
+                            <input type="email" id="newRecipientEmail" placeholder="Enter email address" style="flex: 1;">
+                            <button type="button" class="btn btn-add-item" onclick="addRecipientEmail()">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <small style="color: #666; font-size: 12px;">Email addresses to receive booking notifications</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Test Email Configuration</label>
+                        <button type="button" class="btn btn-secondary" onclick="testEmailConfiguration()">
+                            <i class="fas fa-paper-plane"></i> Send Test Email
+                        </button>
+                        <div id="emailTestResult" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Configuration Section -->
+            <div class="config-section">
+                <h4><i class="fas fa-database"></i> Database Configuration</h4>
+                <div class="config-grid-2">
+                    <div class="form-group">
+                        <label>Database Name</label>
+                        <input type="text" name="database_name" value="{{ config.get('database_name', 'bookings.db') }}"
+                            required disabled>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-lg">
+                    <i class="fas fa-save"></i> Save Configuration
+                </button>
+                <a href="/admin" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-arrow-left"></i> Back to Admin Panel
+                </a>
+            </div>
+        </form>
+
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+            <h5><i class="fas fa-exclamation-triangle"></i> Danger Zone</h5>
+            <p>This will reset all configuration to default values. This action cannot be undone.</p>
+            <form method="POST" action="/admin/config/reset" style="display: inline;">
+                <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Are you sure you want to reset all configuration to defaults? This cannot be undone.')">
+                    <i class="fas fa-undo"></i> Reset to Defaults
+                </button>
+            </form>
+        </div>
+
+        <!-- Information Alert -->
+        <div class="alert info-alert">
+            <i class="fas fa-info-circle"></i>
+            <strong>Note:</strong> Changes to configuration will take effect immediately.
+        </div>
+    </div>
+
+    <script>
+
+
+        function addDateConfig() {
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            const container = document.getElementById('date-cabin-configs');
+
+            const div = document.createElement('div');
+            div.className = 'date-cabin-config';
+            div.setAttribute('data-date', dateString);
+
+            div.innerHTML = `
+        <div class="date-cabin-header">
+            <span><i class="fas fa-calendar"></i> <input type="date" value="${dateString}" onchange="updateDateInConfig(this)" style="border: none; background: transparent; font-weight: 600;"></span>
+            <button type="button" class="btn btn-remove-item" onclick="removeDateConfig(this)" style="padding: 6px 10px;">
+                <i class="fas fa-trash"></i> Remove Date
+            </button>
+        </div>
+        <div class="config-grid-3">
+            <div class="form-group">
+                <label>Cabin Count</label>
+                <input type="number" name="date_${dateString}_cabin_count" value="4" min="1" max="20" required onchange="updateCabinConfigs(this)">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Individual Cabin Configuration</label>
+            <div class="cabin-configs-grid" id="cabin_configs_${dateString}">
+                <div class="cabin-config-item">
+                    <div class="cabin-config-header">Cabin 1</div>
+                    <div class="cabin-config-inputs">
+                        <div class="form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 12px;">Name:</label>
+                            <input type="text" name="date_${dateString}_cabin_0_name" value="C1" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Capacity:</label>
+                            <input type="number" name="date_${dateString}_cabin_0_capacity" value="4" min="1" max="10" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="cabin-config-item">
+                    <div class="cabin-config-header">Cabin 2</div>
+                    <div class="cabin-config-inputs">
+                        <div class="form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 12px;">Name:</label>
+                            <input type="text" name="date_${dateString}_cabin_1_name" value="C2" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Capacity:</label>
+                            <input type="number" name="date_${dateString}_cabin_1_capacity" value="4" min="1" max="10" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="cabin-config-item">
+                    <div class="cabin-config-header">Cabin 3</div>
+                    <div class="cabin-config-inputs">
+                        <div class="form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 12px;">Name:</label>
+                            <input type="text" name="date_${dateString}_cabin_2_name" value="C3" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Capacity:</label>
+                            <input type="number" name="date_${dateString}_cabin_2_capacity" value="4" min="1" max="10" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="cabin-config-item">
+                    <div class="cabin-config-header">Cabin 4</div>
+                    <div class="cabin-config-inputs">
+                        <div class="form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 12px;">Name:</label>
+                            <input type="text" name="date_${dateString}_cabin_3_name" value="C4" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Capacity:</label>
+                            <input type="number" name="date_${dateString}_cabin_3_capacity" value="4" min="1" max="10" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+            container.appendChild(div);
+        }
+
+        function updateCabinConfigs(input) {
+            const cabinCount = parseInt(input.value);
+            const dateConfig = input.closest('.date-cabin-config');
+            const date = dateConfig.getAttribute('data-date');
+            const cabinContainer = dateConfig.querySelector('.cabin-configs-grid');
+
+            // Clear existing cabin config inputs
+            cabinContainer.innerHTML = '';
+
+            // Add new cabin config inputs with individual capacities
+            for (let i = 0; i < cabinCount; i++) {
+                const div = document.createElement('div');
+                div.className = 'cabin-config-item';
+                div.innerHTML = `
+            <div class="cabin-config-header">Cabin ${i + 1}</div>
+            <div class="cabin-config-inputs">
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <label style="font-size: 12px;">Name:</label>
+                    <input type="text" name="date_${date}_cabin_${i}_name" value="C${i + 1}" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label style="font-size: 12px;">Capacity:</label>
+                    <input type="number" name="date_${date}_cabin_${i}_capacity" value="4" min="1" max="10" required>
+                </div>
+            </div>
+        `;
+                cabinContainer.appendChild(div);
+            }
+        }
+
+        function removeDateConfig(button) {
+            if (confirm('Are you sure you want to remove this date configuration?')) {
+                button.closest('.date-cabin-config').remove();
+            }
+        }
+
+        function updateDateInConfig(input) {
+            const dateConfig = input.closest('.date-cabin-config');
+            const oldDate = dateConfig.getAttribute('data-date');
+            const newDate = input.value;
+
+            // Update all input names for this date
+            const inputs = dateConfig.querySelectorAll('input[name*="date_"]');
+            inputs.forEach(inp => {
+                if (inp !== input) {
+                    inp.name = inp.name.replace(`date_${oldDate}_`, `date_${newDate}_`);
+                }
+            });
+
+            // Update cabin configs container ID
+            const cabinContainer = dateConfig.querySelector('.cabin-configs-grid');
+            cabinContainer.id = `cabin_configs_${newDate}`;
+
+            // Update data attribute
+            dateConfig.setAttribute('data-date', newDate);
+        }
+
+        function updateCabinNames(input) {
+            const cabinCount = parseInt(input.value);
+            const dateConfig = input.closest('.date-cabin-config');
+            const date = dateConfig.getAttribute('data-date');
+            const cabinContainer = dateConfig.querySelector('.cabin-names-grid');
+
+            // Clear existing cabin name inputs
+            cabinContainer.innerHTML = '';
+
+            // Add new cabin name inputs
+            for (let i = 0; i < cabinCount; i++) {
+                const div = document.createElement('div');
+                div.className = 'cabin-name-input';
+                div.innerHTML = `
+                    <label>${i + 1}:</label>
+                    <input type="text" name="date_${date}_cabin_${i}_name" value="C${i + 1}" required>
+                `;
+                cabinContainer.appendChild(div);
+            }
+        }
+
+        function removeArrayItem(button) {
+            const container = button.parentElement.parentElement;
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                alert('At least one item is required');
+            }
+        }
+
+        // Toggle API configuration fields
+        document.getElementById('api_enabled').addEventListener('change', function () {
+            const apiFields = document.getElementById('api-config-fields');
+            const inputs = apiFields.querySelectorAll('input');
+            if (this.checked) {
+                apiFields.style.opacity = '1';
+                inputs.forEach(input => input.disabled = false);
+            } else {
+                apiFields.style.opacity = '0.5';
+                inputs.forEach(input => input.disabled = true);
+            }
+        });
+
+        // Toggle Reference API configuration fields
+        document.getElementById('reference_api_enabled').addEventListener('change', function () {
+            const apiFields = document.getElementById('reference-api-config-fields');
+            const inputs = apiFields.querySelectorAll('input');
+            if (this.checked) {
+                apiFields.style.opacity = '1';
+                inputs.forEach(input => input.disabled = false);
+            } else {
+                apiFields.style.opacity = '0.5';
+                inputs.forEach(input => input.disabled = true);
+            }
+        });
+
+        // Initialize toggle state on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.getElementById('api_enabled');
+            const apiFields = document.getElementById('api-config-fields');
+            const inputs = apiFields.querySelectorAll('input');
+            if (toggle.checked) {
+                apiFields.style.opacity = '1';
+                inputs.forEach(input => input.disabled = false);
+            } else {
+                apiFields.style.opacity = '0.5';
+                inputs.forEach(input => input.disabled = true);
+            }
+
+            // Initialize reference API toggle
+            const refToggle = document.getElementById('reference_api_enabled');
+            const refApiFields = document.getElementById('reference-api-config-fields');
+            const refInputs = refApiFields.querySelectorAll('input');
+            if (refToggle.checked) {
+                refApiFields.style.opacity = '1';
+                refInputs.forEach(input => input.disabled = false);
+            } else {
+                refApiFields.style.opacity = '0.5';
+                refInputs.forEach(input => input.disabled = true);
+            }
+
+            // Initialize email fields
+            toggleEmailFields();
+
+            // Load recipient emails
+            loadRecipientEmails();
+
+            // Load reference options
+            loadReferenceOptions();
+        });
+
+        function toggleEmailFields() {
+            const toggle = document.getElementById('email_enabled');
+            const emailFields = document.getElementById('email-config-fields');
+            const inputs = emailFields.querySelectorAll('input');
+            
+            if (toggle && emailFields) {
+                if (toggle.checked) {
+                    emailFields.style.opacity = '1';
+                    inputs.forEach(input => input.disabled = false);
+                } else {
+                    emailFields.style.opacity = '0.5';
+                    inputs.forEach(input => input.disabled = true);
+                }
+            }
+        }
+
+        async function testEmailConfiguration() {
+            const button = document.querySelector('button[onclick="testEmailConfiguration()"]');
+            const resultDiv = document.getElementById('emailTestResult');
+            
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            resultDiv.innerHTML = '<div style="color: #666;"><i class="fas fa-clock"></i> Testing email configuration...</div>';
+            
+            try {
+                const response = await fetch('/admin/config/test-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = '<div style="color: #28a745;"><i class="fas fa-check-circle"></i> ' + data.message + '</div>';
+                } else {
+                    resultDiv.innerHTML = '<div style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ' + data.message + '</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> Error testing email: ' + error.message + '</div>';
+            } finally {
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-paper-plane"></i> Send Test Email';
+                
+                // Clear result after 5 seconds
+                setTimeout(() => {
+                    resultDiv.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // Reference Options Management
+        async function loadReferenceOptions() {
+            try {
+                const response = await fetch('/admin/config/reference');
+                const data = await response.json();
+
+                if (data.success) {
+                    displayReferenceOptions(data.options);
+                } else {
+                    console.error('Failed to load reference options');
+                }
+            } catch (error) {
+                console.error('Error loading reference options:', error);
+            }
+        }
+
+        function displayReferenceOptions(options) {
+            const container = document.getElementById('referenceOptions');
+            container.innerHTML = '';
+
+            options.forEach(option => {
+                const div = document.createElement('div');
+                div.className = 'array-input';
+                div.innerHTML = `
+                    <input type="text" value="${option}" onchange="updateReferenceOption('${option}', this.value)" style="flex: 1;">
+                    <button type="button" class="btn btn-remove-item" onclick="deleteReferenceOption('${option}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function addReferenceOption() {
+            const input = document.getElementById('newReferenceValue');
+            const value = input.value.trim();
+
+            if (!value) {
+                alert('Please enter a reference value');
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/config/reference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=add&value=${encodeURIComponent(value)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    input.value = '';
+                    loadReferenceOptions();
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Error adding reference option', 'error');
+            }
+        }
+
+        async function updateReferenceOption(oldValue, newValue) {
+            if (oldValue === newValue) return;
+
+            if (!newValue.trim()) {
+                showMessage('Reference value cannot be empty', 'error');
+                loadReferenceOptions(); // Reload to reset the input
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/config/reference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=update&old_value=${encodeURIComponent(oldValue)}&new_value=${encodeURIComponent(newValue)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadReferenceOptions();
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                    loadReferenceOptions(); // Reload to reset the input
+                }
+            } catch (error) {
+                showMessage('Error updating reference option', 'error');
+                loadReferenceOptions();
+            }
+        }
+
+        async function deleteReferenceOption(value) {
+            if (!confirm(`Are you sure you want to delete the reference option "${value}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/config/reference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=delete&value=${encodeURIComponent(value)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadReferenceOptions();
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Error deleting reference option', 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            // Create a temporary alert div
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${type === 'success' ? '' : 'alert-danger'}`;
+            alertDiv.style.marginTop = '10px';
+            alertDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${message}`;
+
+            const container = document.getElementById('referenceOptions').parentElement;
+            container.appendChild(alertDiv);
+
+            // Remove the alert after 3 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        // Recipient Email Management Functions
+        async function loadRecipientEmails() {
+            try {
+                const response = await fetch('/admin/config/recipient-emails');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayRecipientEmails(data.emails);
+                } else {
+                    console.error('Failed to load recipient emails');
+                }
+            } catch (error) {
+                console.error('Error loading recipient emails:', error);
+            }
+        }
+
+        function displayRecipientEmails(emails) {
+            const container = document.getElementById('recipientEmails');
+            container.innerHTML = '';
+            
+            emails.forEach(email => {
+                const div = document.createElement('div');
+                div.className = 'array-input';
+                div.innerHTML = `
+                    <input type="email" value="${email}" onchange="updateRecipientEmail('${email}', this.value)" style="flex: 1;">
+                    <button type="button" class="btn btn-remove-item" onclick="deleteRecipientEmail('${email}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function addRecipientEmail() {
+            const input = document.getElementById('newRecipientEmail');
+            const email = input.value.trim();
+            
+            if (!email) {
+                showEmailMessage('Please enter an email address', 'error');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showEmailMessage('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/admin/config/recipient-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=add&email=${encodeURIComponent(email)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    input.value = '';
+                    loadRecipientEmails();
+                    showEmailMessage(data.message, 'success');
+                } else {
+                    showEmailMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showEmailMessage('Error adding email address', 'error');
+            }
+        }
+
+        async function updateRecipientEmail(oldEmail, newEmail) {
+            if (oldEmail === newEmail) return;
+            
+            if (!newEmail.trim()) {
+                showEmailMessage('Email address cannot be empty', 'error');
+                loadRecipientEmails();
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(newEmail)) {
+                showEmailMessage('Please enter a valid email address', 'error');
+                loadRecipientEmails();
+                return;
+            }
+            
+            try {
+                const response = await fetch('/admin/config/recipient-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=update&old_email=${encodeURIComponent(oldEmail)}&new_email=${encodeURIComponent(newEmail)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadRecipientEmails();
+                    showEmailMessage(data.message, 'success');
+                } else {
+                    showEmailMessage(data.message, 'error');
+                    loadRecipientEmails();
+                }
+            } catch (error) {
+                showEmailMessage('Error updating email address', 'error');
+                loadRecipientEmails();
+            }
+        }
+
+        async function deleteRecipientEmail(email) {
+            if (!confirm(`Are you sure you want to remove "${email}" from the recipient list?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/admin/config/recipient-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=delete&email=${encodeURIComponent(email)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadRecipientEmails();
+                    showEmailMessage(data.message, 'success');
+                } else {
+                    showEmailMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showEmailMessage('Error deleting email address', 'error');
+            }
+        }
+
+        function showEmailMessage(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${type === 'success' ? '' : 'alert-danger'}`;
+            alertDiv.style.marginTop = '10px';
+            alertDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${message}`;
+            
+            const container = document.getElementById('recipientEmails').parentElement;
+            container.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        // Form validation
+        document.getElementById('configForm').addEventListener('submit', function (e) {
+
+
+            // Validate date configurations don't have duplicate dates
+            const dateConfigs = document.querySelectorAll('.date-cabin-config');
+            const dates = new Set();
+            let hasDuplicates = false;
+
+            dateConfigs.forEach(config => {
+                const dateInput = config.querySelector('input[type="date"]');
+                const date = dateInput ? dateInput.value : config.getAttribute('data-date');
+                if (dates.has(date)) {
+                    hasDuplicates = true;
+                } else {
+                    dates.add(date);
+                }
+            });
+
+            if (hasDuplicates) {
+                alert('Duplicate dates found in cabin configurations. Each date can only have one configuration.');
+                e.preventDefault();
+                return;
+            }
+        });
+    </script>
+</body>
+
+</html>

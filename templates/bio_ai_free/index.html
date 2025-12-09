@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Camp Registration</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/svg" href="{{ url_for('static', filename='assets/company-logo.svg') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='assets/company-logo.svg') }}" alt="Fitnastic Logo"
+                class="nvidia-logo">
+            <h1><b>Bio-AI Health Assessment Form</b></h1>
+            <p>Schedule your <b>Sample collection at your chosen date, time & address</b></p>
+
+            <b style="display: block; margin-top: 1rem;">Only available slots will be shown. Book early to secure your
+                chosen time.</b>
+        </div>
+
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+            <div class="alert alert-info" style="display: none;">
+                <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+                <span id="flashMessage"></span>
+            </div>
+        </div>
+
+        <form id="bookingForm" method="POST" action="/submit_booking" class="form-section">
+            <div id="membersContainer">
+                <!-- Member 1 -->
+                <div class="member-section" data-member-id="1">
+                    <div class="member-header">
+                        <h3></h3>
+                        <button type="button" class="remove-member-btn" style="display: none;" onclick="removeMember(1)">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="section-title">
+                        <i class="fas fa-user"></i>
+                        Personal Information
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name_1">First Name *</label>
+                            <input type="text" id="first_name_1" name="members[1][first_name]" required placeholder="Enter First Name" onchange="updateMemberDisplay(1)">
+                            <div class="error-message" id="first_name_1_error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="last_name_1">Last Name *</label>
+                            <input type="text" id="last_name_1" name="members[1][last_name]" required placeholder="Enter Last Name" onchange="updateMemberDisplay(1)">
+                            <div class="error-message" id="last_name_1_error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone_1">Phone Number *</label>
+                            <input type="tel" id="phone_1" name="members[1][phone]" required placeholder="Enter your phone number">
+                            <div class="error-message" id="phone_1_error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_1">Email Address *</label>
+                            <input type="email" id="email_1" name="members[1][email]" required placeholder="Enter your email address">
+                            <div class="error-message" id="email_1_error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age_1">Age *</label>
+                            <input type="number" id="age_1" name="members[1][age]" step="1" min="1" required placeholder="Enter your age">
+                            <div class="error-message" id="age_1_error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender_1">Gender *</label>
+                            <select id="gender_1" name="members[1][gender]" required>
+                                <option value="">Select Gender</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                            <div class="error-message" id="gender_1_error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="address_1">Address</label>
+                            <input type="text" id="address_1" name="members[1][address]" placeholder="Enter your address">
+                            <div class="error-message" id="address_1_error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pin_code_1">Pincode</label>
+                            <input type="text" id="pin_code_1" name="members[1][pin_code]" placeholder="Enter your Pincode" pattern="[0-9]{6}" maxlength="6">
+                            <div class="error-message" id="pin_code_1_error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sample Collection Details for Member 1 -->
+                    <div class="sample-collection-section" id="sample_collection_1">
+                        <div class="section-title" style="margin-top: 40px;">
+                            <i class="fas fa-calendar-alt"></i>
+                            Sample Collection Details
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appointment_date_1">Select your sample collection date</label>
+                            <div class="date-picker-container">
+                                <div class="date-input" id="appointment_date_display_1">
+                                    <span class="date-input-text placeholder">Select a date</span>
+                                    <i class="date-input-icon fas fa-calendar-alt"></i>
+                                </div>
+                                <input type="hidden" id="appointment_date_1" name="members[1][appointment_date]" required>
+                                <div class="date-picker" id="datePicker_1">
+                                    <div class="date-picker-header">
+                                        <button type="button" class="nav-btn" id="prevMonth_1">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <div class="month-year" id="monthYear_1"></div>
+                                        <button type="button" class="nav-btn" id="nextMonth_1">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                    <div class="calendar-grid">
+                                        <div class="weekdays">
+                                            <div class="weekday">Sun</div>
+                                            <div class="weekday">Mon</div>
+                                            <div class="weekday">Tue</div>
+                                            <div class="weekday">Wed</div>
+                                            <div class="weekday">Thu</div>
+                                            <div class="weekday">Fri</div>
+                                            <div class="weekday">Sat</div>
+                                        </div>
+                                        <div class="days" id="daysGrid_1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="error-message" id="appointment_date_1_error"></div>
+                            <small style="color: #666; font-size: 0.9em; margin-top: 4px; display: block;">
+                                <i class="fas fa-info-circle"></i> Please select a date for your Bio-AI Health Assessment
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="time_slot_1">Select your chosen time slot *</label>
+                            <div class="time-slots-container" id="timeSlotsContainer_1">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading available time slots...
+                                </div>
+                            </div>
+                            <input type="hidden" id="selected_time_slot_1" name="members[1][time_slot]" required>
+                            <div class="error-message" id="time_slot_1_error"></div>
+                            <small style="color: #666; font-size: 0.9em; margin-top: 4px; display: block;">
+                                <i class="fas fa-info-circle"></i> Please select an available time slot for your assessment
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Add Another Member Question -->
+                    <div class="add-member-section" id="add_member_1">
+                        <div class="form-group" style="margin-top: 30px;">
+                            <label>Would you like to add one more member to the sample collection?</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="add_member_1" value="yes" onclick="showAddMember(1)">
+                                    Yes
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="add_member_1" value="no" onclick="finalizeBooking()" checked>
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn" disabled>
+                <i class="fas fa-calendar-check" style="margin-right: 8px;"></i>
+                Book Appointment
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let memberCount = 1;
+        const maxMembers = 10;
+        const datePickers = {};
+
+        // Custom Date Picker Class
+        class DatePicker {
+            constructor(inputId, displayId, pickerId, memberId) {
+                this.input = document.getElementById(inputId);
+                this.display = document.getElementById(displayId);
+                this.picker = document.getElementById(pickerId);
+                this.memberId = memberId;
+                this.currentDate = new Date();
+                this.selectedDate = null;
+                this.minimumDaysAhead = 2; // Default, will be updated from config
+
+                this.init();
+            }
+
+            init() {
+                this.display.addEventListener('click', () => this.toggle());
+                document.addEventListener('click', (e) => {
+                    if (!this.display.contains(e.target) && !this.picker.contains(e.target)) {
+                        this.hide();
+                    }
+                });
+
+                document.getElementById(`prevMonth_${this.memberId}`).addEventListener('click', () => this.prevMonth());
+                document.getElementById(`nextMonth_${this.memberId}`).addEventListener('click', () => this.nextMonth());
+
+                this.render();
+            }
+
+            toggle() {
+                this.picker.classList.toggle('show');
+            }
+
+            hide() {
+                this.picker.classList.remove('show');
+            }
+
+            prevMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+                this.render();
+            }
+
+            nextMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+                this.render();
+            }
+
+            selectDate(date) {
+                this.selectedDate = date;
+                // Format date without timezone conversion
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const formattedDate = `${year}-${month}-${day}`;
+
+                this.input.value = formattedDate;
+
+                // Use setTimeout to ensure value is set before validation runs
+                setTimeout(() => {
+                    // Dispatch input and change events to ensure validation triggers
+                    const inputEvent = new Event('input', { bubbles: true });
+                    const changeEvent = new Event('change', { bubbles: true });
+                    this.input.dispatchEvent(inputEvent);
+                    this.input.dispatchEvent(changeEvent);
+                    
+                    // Manually trigger validation to ensure it runs with the new value
+                    checkFormValidity();
+                }, 0);
+
+                this.display.querySelector('.date-input-text').textContent = date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                this.display.querySelector('.date-input-text').classList.remove('placeholder');
+                this.hide();
+
+                // Load time slots for the selected date
+                this.loadTimeSlots(formattedDate);
+            }
+
+            async loadTimeSlots(date) {
+                const container = document.getElementById(`timeSlotsContainer_${this.memberId}`);
+                const timeSlotInput = document.getElementById(`selected_time_slot_${this.memberId}`);
+                const timeSlotError = document.getElementById(`time_slot_${this.memberId}_error`);
+
+                // Clear previous selection and error message
+                timeSlotInput.value = '';
+                if (timeSlotError) {
+                    timeSlotError.textContent = '';
+                }
+
+                try {
+                    const response = await fetch(`/api/time_slots?date=${date}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        container.innerHTML = this.renderTimeSlots(data.time_slots);
+                        this.attachTimeSlotListeners();
+                    } else {
+                        container.innerHTML = '<div class="error-message">Failed to load time slots</div>';
+                    }
+                } catch (error) {
+                    container.innerHTML = '<div class="error-message">Error loading time slots</div>';
+                }
+            }
+
+            renderTimeSlots(timeSlots) {
+                if (timeSlots.length === 0) {
+                    return '<div class="info-box">No time slots available for this date</div>';
+                }
+
+                return timeSlots.map(slot => `
+                    <button type="button" class="slot-button slot-button-${this.memberId} ${slot.available ? '' : 'disabled'}"
+                            data-time="${slot.time}" data-available="${slot.available}" data-member="${this.memberId}">
+                        <div class="slot-time">${slot.display_time}</div>
+                        <div class="slot-availability">${slot.available ? `${slot.available_spots} spots left` : 'Fully booked'}</div>
+                    </button>
+                `).join('');
+            }
+
+            attachTimeSlotListeners() {
+                const slotButtons = document.querySelectorAll(`.slot-button-${this.memberId}:not(.disabled)`);
+                const timeSlotInput = document.getElementById(`selected_time_slot_${this.memberId}`);
+
+                slotButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // Remove selected class from all buttons for this member
+                        document.querySelectorAll(`.slot-button-${this.memberId}`).forEach(btn => btn.classList.remove('selected'));
+
+                        // Add selected class to clicked button
+                        button.classList.add('selected');
+
+                        // Set the selected time
+                        timeSlotInput.value = button.dataset.time;
+
+                        // Use setTimeout to ensure value is set before validation runs
+                        setTimeout(() => {
+                            // Dispatch input and change events to ensure validation triggers
+                            const inputEvent = new Event('input', { bubbles: true });
+                            const changeEvent = new Event('change', { bubbles: true });
+                            timeSlotInput.dispatchEvent(inputEvent);
+                            timeSlotInput.dispatchEvent(changeEvent);
+                            
+                            // Manually trigger validation to ensure it runs with the new value
+                            checkFormValidity();
+                        }, 0);
+
+                    });
+                });
+            }
+
+            render() {
+                const monthYear = document.getElementById(`monthYear_${this.memberId}`);
+                const daysGrid = document.getElementById(`daysGrid_${this.memberId}`);
+
+                monthYear.textContent = this.currentDate.toLocaleDateString('en-US', {
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                daysGrid.innerHTML = '';
+
+                const firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
+                const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const minSelectableDate = new Date(today);
+                minSelectableDate.setDate(today.getDate() + this.minimumDaysAhead);
+
+                for (let i = 0; i < 42; i++) {
+                    const day = new Date(startDate);
+                    day.setDate(startDate.getDate() + i);
+
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'day';
+                    dayElement.textContent = day.getDate();
+
+                    if (day.getMonth() !== this.currentDate.getMonth()) {
+                        dayElement.classList.add('other-month');
+                    }
+
+                    if (day < minSelectableDate) {
+                        dayElement.classList.add('disabled');
+                    } else {
+                        dayElement.addEventListener('click', () => this.selectDate(day));
+                    }
+
+                    if (this.selectedDate &&
+                        day.toDateString() === this.selectedDate.toDateString()) {
+                        dayElement.classList.add('selected');
+                    }
+
+                    if (day.toDateString() === today.toDateString()) {
+                        dayElement.classList.add('today');
+                    }
+
+                    daysGrid.appendChild(dayElement);
+                }
+            }
+        }
+
+        function addMember() {
+            // Collapse all existing members except the last one
+            const existingMembers = document.querySelectorAll('.member-section');
+            existingMembers.forEach(member => {
+                member.classList.add('collapsed');
+                const header = member.querySelector('.member-header');
+                // Update header to show member name
+                updateMemberHeader(member);
+                // Add click listener to header for expansion
+                if (!header.hasAttribute('data-click-listener')) {
+                    header.addEventListener('click', () => {
+                        member.classList.toggle('collapsed');
+                        // Show/hide same address question based on collapsed state
+                        const memberId = member.getAttribute('data-member-id');
+                        const sameAddressSection = document.getElementById(`same_address_${memberId}`);
+                        if (sameAddressSection) {
+                            sameAddressSection.style.display = member.classList.contains('collapsed') ? 'none' : 'block';
+                        }
+                    });
+                    header.setAttribute('data-click-listener', 'true');
+                }
+                // Hide the same address question for collapsed members
+                const memberId = member.getAttribute('data-member-id');
+                const sameAddressSection = document.getElementById(`same_address_${memberId}`);
+                if (sameAddressSection) {
+                    sameAddressSection.style.display = 'none';
+                }
+            });
+
+            memberCount++;
+            const membersContainer = document.getElementById('membersContainer');
+
+            const memberHtml = `
+                <div class="member-section" data-member-id="${memberCount}">
+                    <div class="member-header">
+                        <h3></h3>
+                        <button type="button" class="remove-member-btn" onclick="removeMember(${memberCount})" ${memberCount === 1 ? 'style="display: none;"' : ''}>
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="section-title">
+                        <i class="fas fa-user"></i>
+                        Personal Information
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name_${memberCount}">First Name *</label>
+                            <input type="text" id="first_name_${memberCount}" name="members[${memberCount}][first_name]" required placeholder="Enter First Name" onchange="updateMemberDisplay(${memberCount})">
+                            <div class="error-message" id="first_name_${memberCount}_error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="last_name_${memberCount}">Last Name *</label>
+                            <input type="text" id="last_name_${memberCount}" name="members[${memberCount}][last_name]" required placeholder="Enter Last Name" onchange="updateMemberDisplay(${memberCount})">
+                            <div class="error-message" id="last_name_${memberCount}_error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone_${memberCount}">Phone Number *</label>
+                            <input type="tel" id="phone_${memberCount}" name="members[${memberCount}][phone]" required placeholder="Enter phone number">
+                            <div class="error-message" id="phone_${memberCount}_error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_${memberCount}">Email Address *</label>
+                            <input type="email" id="email_${memberCount}" name="members[${memberCount}][email]" required placeholder="Enter email address">
+                            <div class="error-message" id="email_${memberCount}_error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age_${memberCount}">Age *</label>
+                            <input type="number" id="age_${memberCount}" name="members[${memberCount}][age]" step="1" min="1" required placeholder="Enter age">
+                            <div class="error-message" id="age_${memberCount}_error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender_${memberCount}">Gender *</label>
+                            <select id="gender_${memberCount}" name="members[${memberCount}][gender]" required>
+                                <option value="">Select Gender</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                            <div class="error-message" id="gender_${memberCount}_error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Address Same Question -->
+                    <div class="add-member-section" id="same_address_${memberCount}">
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>The collection address is the same as mentioned above.</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="same_address_${memberCount}" value="yes" onclick="useSameAddress(${memberCount}, true)" checked>
+                                    Yes
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="same_address_${memberCount}" value="no" onclick="useSameAddress(${memberCount}, false)">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" id="address_row_${memberCount}" style="display: none;">
+                        <div class="form-group">
+                            <label for="address_${memberCount}">Address</label>
+                            <input type="text" id="address_${memberCount}" name="members[${memberCount}][address]" placeholder="Enter address">
+                            <div class="error-message" id="address_${memberCount}_error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pin_code_${memberCount}">Pincode</label>
+                            <input type="text" id="pin_code_${memberCount}" name="members[${memberCount}][pin_code]" placeholder="Enter Pincode" pattern="[0-9]{6}" maxlength="6">
+                            <div class="error-message" id="pin_code_${memberCount}_error"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sample Collection Details for additional members -->
+                    <div class="sample-collection-section" id="sample_collection_${memberCount}">
+                        <div class="section-title" style="margin-top: 40px;">
+                            <i class="fas fa-calendar-alt"></i>
+                            Sample Collection Details
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appointment_date_${memberCount}">Select your sample collection date</label>
+                            <div class="date-picker-container">
+                                <div class="date-input" id="appointment_date_display_${memberCount}">
+                                    <span class="date-input-text placeholder">Select a date</span>
+                                    <i class="date-input-icon fas fa-calendar-alt"></i>
+                                </div>
+                                <input type="hidden" id="appointment_date_${memberCount}" name="members[${memberCount}][appointment_date]" required>
+                                <div class="date-picker" id="datePicker_${memberCount}">
+                                    <div class="date-picker-header">
+                                        <button type="button" class="nav-btn" id="prevMonth_${memberCount}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <div class="month-year" id="monthYear_${memberCount}"></div>
+                                        <button type="button" class="nav-btn" id="nextMonth_${memberCount}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                    <div class="calendar-grid">
+                                        <div class="weekdays">
+                                            <div class="weekday">Sun</div>
+                                            <div class="weekday">Mon</div>
+                                            <div class="weekday">Tue</div>
+                                            <div class="weekday">Wed</div>
+                                            <div class="weekday">Thu</div>
+                                            <div class="weekday">Fri</div>
+                                            <div class="weekday">Sat</div>
+                                        </div>
+                                        <div class="days" id="daysGrid_${memberCount}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="error-message" id="appointment_date_${memberCount}_error"></div>
+                            <small style="color: #666; font-size: 0.9em; margin-top: 4px; display: block;">
+                                <i class="fas fa-info-circle"></i> Please select a date for your Bio-AI Health Assessment
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="time_slot_${memberCount}">Select your chosen time slot *</label>
+                            <div class="time-slots-container" id="timeSlotsContainer_${memberCount}">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading available time slots...
+                                </div>
+                            </div>
+                            <input type="hidden" id="selected_time_slot_${memberCount}" name="members[${memberCount}][time_slot]" required>
+                            <div class="error-message" id="time_slot_${memberCount}_error"></div>
+                            <small style="color: #666; font-size: 0.9em; margin-top: 4px; display: block;">
+                                <i class="fas fa-info-circle"></i> Please select an available time slot for your assessment
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Add Another Member Question -->
+                    <div class="add-member-section" id="add_member_${memberCount}">
+                        <div class="form-group" style="margin-top: 30px;">
+                            <label>Would you like to add one more member to the sample collection?</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="add_member_${memberCount}" value="yes" onclick="showAddMember(${memberCount})">
+                                    Yes
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="add_member_${memberCount}" value="no" onclick="finalizeBooking()" checked>
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            membersContainer.insertAdjacentHTML('beforeend', memberHtml);
+
+            // Initialize date picker for new member
+            datePickers[memberCount] = new DatePicker(`appointment_date_${memberCount}`, `appointment_date_display_${memberCount}`, `datePicker_${memberCount}`, memberCount);
+            datePickers[memberCount].minimumDaysAhead = window.minimumDaysAhead || 2;
+
+            // Show the same address question for the new member
+            document.getElementById(`same_address_${memberCount}`).style.display = 'block';
+
+            // Auto-trigger the "Yes" selection for same address (since it's checked by default)
+            setTimeout(() => {
+                useSameAddress(memberCount, true);
+            }, 100);
+
+            // Add event listeners for validation
+            addValidationListeners(memberCount);
+        }
+
+        function removeMember(memberId) {
+            if (memberCount <= 1) return;
+
+            const memberSection = document.querySelector(`[data-member-id="${memberId}"]`);
+            if (memberSection) {
+                memberSection.remove();
+                memberCount--;
+
+                // Show the "Would you like to add one more member to the sample collection?" question for the last remaining member
+                const remainingMembers = document.querySelectorAll('.member-section');
+                if (remainingMembers.length > 0) {
+                    let maxId = 0;
+                    remainingMembers.forEach(member => {
+                        const id = parseInt(member.getAttribute('data-member-id'));
+                        if (id > maxId) maxId = id;
+                    });
+                    const lastMemberAddSection = document.getElementById(`add_member_${maxId}`);
+                    if (lastMemberAddSection) {
+                        lastMemberAddSection.style.display = 'block';
+                        // Ensure "No" is selected
+                        const noRadio = document.querySelector(`input[name="add_member_${maxId}"][value="no"]`);
+                        if (noRadio) {
+                            noRadio.checked = true;
+                        }
+                    }
+                }
+
+                // Renumber remaining members if needed
+                // For simplicity, we'll keep the IDs as is since form processing handles it
+            }
+        }
+
+        function showAddMember(currentMemberId) {
+            // Hide the add member question for current member
+            document.getElementById(`add_member_${currentMemberId}`).style.display = 'none';
+
+            // Add new member
+            if (memberCount < maxMembers) {
+                addMember();
+
+                // Auto-scroll to the new member's personal info section
+                const newMemberSection = document.querySelector(`[data-member-id="${memberCount}"]`);
+                if (newMemberSection) {
+                    newMemberSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        function useSameAddress(memberId, useSame) {
+            const addressRow = document.getElementById(`address_row_${memberId}`);
+            const addressInput = document.getElementById(`address_${memberId}`);
+            const pinCodeInput = document.getElementById(`pin_code_${memberId}`);
+
+            if (useSame) {
+                // Copy address from previous member
+                const prevMemberId = memberId - 1;
+                const prevAddress = document.getElementById(`address_${prevMemberId}`).value;
+                const prevPinCode = document.getElementById(`pin_code_${prevMemberId}`).value;
+
+                addressInput.value = prevAddress;
+                pinCodeInput.value = prevPinCode;
+
+                // Trigger validation events
+                setTimeout(() => {
+                    addressInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    pinCodeInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    checkFormValidity();
+                }, 0);
+
+                // Hide address row
+                addressRow.style.display = 'none';
+            } else {
+                // Show address row for custom address
+                addressRow.style.display = 'flex';
+            }
+        }
+
+
+        function finalizeBooking() {
+            // Hide all add member questions
+            for (let i = 1; i <= memberCount; i++) {
+                const addMemberSection = document.getElementById(`add_member_${i}`);
+                if (addMemberSection) {
+                    addMemberSection.style.display = 'none';
+                }
+            }
+
+            // Collapse all members except Member 1 and update their headers
+            const allMembers = document.querySelectorAll('.member-section[data-member-id]:not([data-member-id="1"])');
+            allMembers.forEach(member => {
+                member.classList.add('collapsed');
+                updateMemberHeader(member);
+                // Add click listener to header for expansion
+                const header = member.querySelector('.member-header');
+                if (!header.hasAttribute('data-click-listener')) {
+                    header.addEventListener('click', () => {
+                        member.classList.toggle('collapsed');
+                        // Show/hide same address question based on collapsed state
+                        const memberId = member.getAttribute('data-member-id');
+                        const sameAddressSection = document.getElementById(`same_address_${memberId}`);
+                        if (sameAddressSection) {
+                            sameAddressSection.style.display = member.classList.contains('collapsed') ? 'none' : 'block';
+                        }
+                    });
+                    header.setAttribute('data-click-listener', 'true');
+                }
+                // Hide the same address question for collapsed members
+                const memberId = member.getAttribute('data-member-id');
+                const sameAddressSection = document.getElementById(`same_address_${memberId}`);
+                if (sameAddressSection) {
+                    sameAddressSection.style.display = 'none';
+                }
+            });
+        }
+
+        function updateMemberHeader(memberSection) {
+            const memberId = memberSection.getAttribute('data-member-id');
+            const firstName = document.getElementById(`first_name_${memberId}`)?.value || '';
+            const lastName = document.getElementById(`last_name_${memberId}`)?.value || '';
+            const header = memberSection.querySelector('.member-header h3');
+
+            if (firstName || lastName) {
+                header.textContent = `${firstName} ${lastName}`.trim();
+            } else {
+                header.textContent = '';
+            }
+        }
+
+        function updateMemberDisplay(memberId) {
+            const memberSection = document.querySelector(`[data-member-id="${memberId}"]`);
+            if (memberSection) {
+                updateMemberHeader(memberSection);
+            }
+        }
+
+        // Form validation functions
+        function validateField(fieldName, value) {
+            const trimmed = value.trim();
+            if (!trimmed) return false;
+
+            switch (fieldName) {
+                case 'first_name':
+                case 'last_name':
+                    return /^[a-zA-Z\s'-]+$/.test(trimmed);
+                case 'phone':
+                    const phoneClean = trimmed.replace(/\s/g, '');
+                    if (phoneClean.startsWith('+')) {
+                        return /^\+\d{1,3}-\d+$/.test(phoneClean);
+                    } else {
+                        return /^[1-9]\d{9}$/.test(phoneClean);
+                    }
+                case 'email':
+                    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmed);
+                case 'age':
+                    return /^\d+$/.test(trimmed) && parseInt(trimmed) > 0;
+                case 'gender':
+                    return trimmed === 'M' || trimmed === 'F';
+                case 'pin_code':
+                    return trimmed === '' || /^[0-9]{6}$/.test(trimmed);
+                default:
+                    return true;
+            }
+        }
+
+        function checkFormValidity() {
+            let isValid = true;
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Check all members personal info
+            for (let i = 1; i <= memberCount; i++) {
+                const requiredFields = ['first_name', 'last_name', 'phone', 'email', 'age', 'gender'];
+
+                // Check personal info fields
+                requiredFields.forEach(field => {
+                    const element = document.getElementById(`${field}_${i}`);
+                    if (element) {
+                        const value = element.value;
+                        const errorDiv = document.getElementById(`${field}_${i}_error`);
+                        if (!value || value.trim() === '') {
+                            isValid = false;
+                            if (errorDiv) errorDiv.textContent = capitalize(field.replace('_', ' ')) + ' is required';
+                        } else if (!validateField(field, value)) {
+                            isValid = false;
+                            if (errorDiv) errorDiv.textContent = capitalize(field.replace('_', ' ')) + ' format is invalid';
+                        } else {
+                            if (errorDiv) errorDiv.textContent = '';
+                        }
+                    }
+                });
+            }
+
+            // Check sample collection details for all members
+            for (let i = 1; i <= memberCount; i++) {
+                const appointmentDateElement = document.getElementById(`appointment_date_${i}`);
+                const timeSlotElement = document.getElementById(`selected_time_slot_${i}`);
+                
+                if (appointmentDateElement) {
+                    const appointmentDate = appointmentDateElement.value;
+                    const appointmentDateError = document.getElementById(`appointment_date_${i}_error`);
+                    if (!appointmentDate || appointmentDate.trim() === '') {
+                        isValid = false;
+                        if (appointmentDateError) appointmentDateError.textContent = 'Sample collection date is required';
+                    } else {
+                        const selectedDate = new Date(appointmentDate);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        if (selectedDate < today) {
+                            isValid = false;
+                            if (appointmentDateError) appointmentDateError.textContent = 'Sample collection date cannot be in the past';
+                        } else {
+                            if (appointmentDateError) appointmentDateError.textContent = '';
+                        }
+                    }
+                }
+
+                if (timeSlotElement) {
+                    const timeSlot = timeSlotElement.value;
+                    const timeSlotError = document.getElementById(`time_slot_${i}_error`);
+                    if (!timeSlot || timeSlot.trim() === '') {
+                        isValid = false;
+                        if (timeSlotError) timeSlotError.textContent = 'Time slot selection is required';
+                    } else {
+                        if (timeSlotError) timeSlotError.textContent = '';
+                    }
+                }
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = !isValid;
+
+                // Update button text
+                if (isValid) {
+                    submitBtn.innerHTML = '<i class="fas fa-calendar-check" style="margin-right: 8px;"></i>Book Appointment';
+                } else {
+                    submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>Please correct the errors';
+                }
+            }
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function addValidationListeners(memberId) {
+            const fields = ['first_name', 'last_name', 'phone', 'email', 'age', 'gender', 'address', 'pin_code', 'appointment_date', 'time_slot'];
+            fields.forEach(field => {
+                const element = document.getElementById(`${field}_${memberId}`);
+                if (element) {
+                    element.addEventListener('change', checkFormValidity);
+                    element.addEventListener('input', checkFormValidity);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Fetch minimum days ahead from config and make it global
+            window.minimumDaysAhead = 2; // Default fallback
+            try {
+                const configResponse = await fetch('/api/config/minimum_days_ahead');
+                if (configResponse.ok) {
+                    const configData = await configResponse.json();
+                    window.minimumDaysAhead = configData.minimum_days_ahead || 2;
+                }
+            } catch (error) {
+                console.log('Using default minimum days ahead:', error);
+            }
+
+            // Initialize date picker for member 1
+            datePickers[1] = new DatePicker('appointment_date_1', 'appointment_date_display_1', 'datePicker_1', 1);
+            datePickers[1].minimumDaysAhead = window.minimumDaysAhead || 2;
+
+            const submitBtn = document.getElementById('submitBtn');
+            const bookingForm = document.getElementById('bookingForm');
+
+            // Add event listeners for member 1
+            addValidationListeners(1);
+
+            // Add form submission handler
+            document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                console.log('Form submission started');
+
+                // Log all form data for debugging
+                const formData = new FormData(this);
+                console.log('Form data:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+
+                // Check if form is valid
+                if (submitBtn.disabled) {
+                    e.preventDefault();
+                    alert('Please fill in all required fields before submitting.');
+                    return false;
+                }
+
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>Processing...';
+            });
+
+            // Initial form validation check
+            checkFormValidity();
+        });
+    </script>
+</body>
+
+</html>
