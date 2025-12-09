@@ -167,7 +167,7 @@ def init_all_databases():
     init_camp_db()
     print("All databases initialized successfully")
 
+init_all_databases()
 
 if __name__ == '__main__':
-    init_all_databases()
     app.run(debug=True, host='0.0.0.0', port=5000)
