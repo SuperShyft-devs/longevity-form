@@ -30,6 +30,8 @@ DEFAULT_CONFIG = {
     'slot_duration': 60,
     'max_people_per_slot': 2,
     'minimum_days_ahead': 2,
+    # Payment configuration
+    'default_payment_link': 'https://razorpay.me/@fitnastic',  # Default payment redirect link
     # Email configuration
     'email_enabled': True,
     'smtp_server': 'smtp.gmail.com',

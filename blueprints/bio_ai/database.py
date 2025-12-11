@@ -34,9 +34,23 @@ def init_db():
         CREATE TABLE IF NOT EXISTS reference_options (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             value TEXT NOT NULL UNIQUE,
+            payment_link TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    
+    # Migrate existing database - add payment_link column if it doesn't exist
+    try:
+        cursor.execute("PRAGMA table_info(reference_options)")
+        columns = [column[1] for column in cursor.fetchall()]
+        
+        if 'payment_link' not in columns:
+            print("[BIO-AI] Migrating database: adding payment_link column...")
+            cursor.execute("ALTER TABLE reference_options ADD COLUMN payment_link TEXT")
+            conn.commit()
+            print("[BIO-AI] Migration successful")
+    except Exception as e:
+        print(f"[BIO-AI] Migration error: {e}")
     
     # Insert default reference options if table is empty
     cursor.execute('SELECT COUNT(*) FROM reference_options')
@@ -164,13 +178,38 @@ def get_reference_options():
     return options
 
 
-def add_reference_option(value):
+def get_reference_options_with_links():
+    """Get all reference options with their payment links"""
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT value, payment_link FROM reference_options ORDER BY value')
+    options = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    
+    return options
+
+
+def get_payment_link_for_reference(reference_value):
+    """Get payment link for a specific reference option"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT payment_link FROM reference_options WHERE value = ?', (reference_value,))
+    result = cursor.fetchone()
+    conn.close()
+    
+    return result[0] if result and result[0] else None
+
+
+def add_reference_option(value, payment_link=None):
     """Add a new reference option"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        cursor.execute('INSERT INTO reference_options (value) VALUES (?)', (value,))
+        cursor.execute('INSERT INTO reference_options (value, payment_link) VALUES (?, ?)', (value, payment_link))
         conn.commit()
         success = True
     except Exception as e:
@@ -182,17 +221,38 @@ def add_reference_option(value):
     return success
 
 
-def update_reference_option(old_value, new_value):
+def update_reference_option(old_value, new_value, payment_link=None):
     """Update an existing reference option"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        cursor.execute('UPDATE reference_options SET value = ? WHERE value = ?', (new_value, old_value))
+        if payment_link is not None:
+            cursor.execute('UPDATE reference_options SET value = ?, payment_link = ? WHERE value = ?', (new_value, payment_link, old_value))
+        else:
+            cursor.execute('UPDATE reference_options SET value = ? WHERE value = ?', (new_value, old_value))
         conn.commit()
         success = cursor.rowcount > 0
     except Exception as e:
         print(f"Error updating reference option: {e}")
+        success = False
+    finally:
+        conn.close()
+    
+    return success
+
+
+def update_reference_payment_link(value, payment_link):
+    """Update payment link for a reference option"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute('UPDATE reference_options SET payment_link = ? WHERE value = ?', (payment_link, value))
+        conn.commit()
+        success = cursor.rowcount > 0
+    except Exception as e:
+        print(f"Error updating payment link: {e}")
         success = False
     finally:
         conn.close()

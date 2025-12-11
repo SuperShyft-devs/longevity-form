@@ -15,8 +15,11 @@ from .database import (
     delete_booking_by_id,
     get_db_connection,
     get_reference_options,
+    get_reference_options_with_links,
+    get_payment_link_for_reference,
     add_reference_option,
     update_reference_option,
+    update_reference_payment_link,
     delete_reference_option,
 )
 from shared_utils import admin_required
@@ -223,7 +226,14 @@ def submit_booking():
                 ],
             )
 
-        return redirect("https://razorpay.me/@fitnastic")
+        # Get payment link based on reference option
+        payment_link = get_payment_link_for_reference(booking_data.get("reference"))
+        if payment_link:
+            return redirect(payment_link)
+        else:
+            # Default payment link if no specific link is configured
+            default_link = config_manager.get('default_payment_link', 'https://razorpay.me/@fitnastic')
+            return redirect(default_link)
     except Exception as e:
         return render_template("bio_ai/error.html", message=f"Unexpected error: {str(e)}")
 
@@ -275,6 +285,7 @@ def admin_config():
                 "slot_duration": int(request.form.get("slot_duration", 60)),
                 "max_people_per_slot": int(request.form.get("max_people_per_slot", 2)),
                 "minimum_days_ahead": int(request.form.get("minimum_days_ahead", 2)),
+                "default_payment_link": request.form.get("default_payment_link", "https://razorpay.me/@fitnastic"),
                 "smtp_server": request.form.get("smtp_server", ""),
                 "smtp_port": int(request.form.get("smtp_port", 587)),
                 "sender_email": request.form.get("sender_email", ""),
@@ -320,8 +331,9 @@ def admin_reference_config():
         
         if action == "add":
             value = request.form.get("value", "").strip()
+            payment_link = request.form.get("payment_link", "").strip()
             if value:
-                if add_reference_option(value):
+                if add_reference_option(value, payment_link if payment_link else None):
                     return jsonify({"success": True, "message": f"Reference option '{value}' added"})
                 return jsonify({"success": False, "message": "Failed to add or already exists"})
             return jsonify({"success": False, "message": "Value cannot be empty"})
@@ -329,11 +341,21 @@ def admin_reference_config():
         elif action == "update":
             old_value = request.form.get("old_value", "").strip()
             new_value = request.form.get("new_value", "").strip()
+            payment_link = request.form.get("payment_link", "").strip()
             if old_value and new_value:
-                if update_reference_option(old_value, new_value):
-                    return jsonify({"success": True, "message": f"Updated from '{old_value}' to '{new_value}'"})
+                if update_reference_option(old_value, new_value, payment_link if payment_link else None):
+                    return jsonify({"success": True, "message": f"Updated '{old_value}' to '{new_value}'"})
                 return jsonify({"success": False, "message": "Failed to update"})
             return jsonify({"success": False, "message": "Both values required"})
+        
+        elif action == "update_payment_link":
+            value = request.form.get("value", "").strip()
+            payment_link = request.form.get("payment_link", "").strip()
+            if value:
+                if update_reference_payment_link(value, payment_link if payment_link else None):
+                    return jsonify({"success": True, "message": f"Payment link updated for '{value}'"})
+                return jsonify({"success": False, "message": "Failed to update payment link"})
+            return jsonify({"success": False, "message": "Value required"})
         
         elif action == "delete":
             value = request.form.get("value", "").strip()
@@ -343,7 +365,7 @@ def admin_reference_config():
                 return jsonify({"success": False, "message": "Failed to delete"})
             return jsonify({"success": False, "message": "Value cannot be empty"})
 
-    reference_options = get_reference_options()
+    reference_options = get_reference_options_with_links()
     return jsonify({"success": True, "options": reference_options})
 
 

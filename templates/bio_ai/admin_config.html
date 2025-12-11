@@ -408,6 +408,22 @@
                 </div>
             </div>
 
+            <!-- Payment Configuration Section -->
+            <div class="config-section">
+                <h4><i class="fas fa-credit-card"></i> Payment Configuration</h4>
+                <div class="config-grid-2">
+                    <div class="form-group">
+                        <label>Default Payment Link</label>
+                        <input type="url" name="default_payment_link" 
+                            value="{{ config.get('default_payment_link', 'https://razorpay.me/@fitnastic') }}" 
+                            placeholder="https://razorpay.me/@yourusername" required>
+                        <small style="color: #666; font-size: 12px;">
+                            This payment link is used when no specific reference payment link is configured
+                        </small>
+                    </div>
+                </div>
+            </div>
+
             <!-- Reference Dropdown Configuration Section -->
             <div class="config-section">
                 <h4><i class="fas fa-list"></i> Reference Dropdown Configuration</h4>
@@ -417,17 +433,24 @@
                         <!-- Options will be loaded here -->
                     </div>
 
-                    <div class="config-grid-2" style="margin-top: 16px;">
-                        <div class="form-group">
-                            <label>Add New Option</label>
-                            <div style="display: flex; gap: 8px;">
-                                <input type="text" id="newReferenceValue" placeholder="Enter new reference value"
-                                    style="flex: 1;">
-                                <button type="button" class="btn btn-add-item" onclick="addReferenceOption()">
-                                    <i class="fas fa-plus"></i> Add
-                                </button>
-                            </div>
+                    <div style="margin-top: 16px; padding: 16px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f0f8ff;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px;">
+                            <i class="fas fa-plus-circle"></i> Add New Reference Option
+                        </h5>
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666;">Reference Name</label>
+                            <input type="text" id="newReferenceValue" placeholder="e.g., A, B, C, Doctor Name, etc."
+                                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                         </div>
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666;">Payment Redirect Link</label>
+                            <input type="url" id="newReferencePaymentLink" placeholder="https://razorpay.me/@yourusername"
+                                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <small style="color: #666; font-size: 11px;">Users selecting this reference will be redirected to this payment link after booking</small>
+                        </div>
+                        <button type="button" class="btn btn-add-item" onclick="addReferenceOption()" style="width: 100%;">
+                            <i class="fas fa-plus"></i> Add Reference Option
+                        </button>
                     </div>
                 </div>
 
@@ -887,13 +910,32 @@
             container.innerHTML = '';
 
             options.forEach(option => {
+                const optionValue = typeof option === 'string' ? option : option.value;
+                const paymentLink = typeof option === 'string' ? '' : (option.payment_link || '');
+                
                 const div = document.createElement('div');
-                div.className = 'array-input';
+                div.className = 'reference-option-item';
+                div.style.marginBottom = '16px';
+                div.style.padding = '16px';
+                div.style.border = '1px solid #e0e0e0';
+                div.style.borderRadius = '8px';
+                div.style.backgroundColor = '#f9f9f9';
                 div.innerHTML = `
-                    <input type="text" value="${option}" onchange="updateReferenceOption('${option}', this.value)" style="flex: 1;">
-                    <button type="button" class="btn btn-remove-item" onclick="deleteReferenceOption('${option}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Reference Name</label>
+                            <input type="text" value="${optionValue}" onchange="updateReferenceOption('${optionValue}', this.value, document.getElementById('payment_link_${optionValue}').value)" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <button type="button" class="btn btn-remove-item" onclick="deleteReferenceOption('${optionValue}')" style="margin-top: 20px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 4px;">Payment Redirect Link</label>
+                            <input type="url" id="payment_link_${optionValue}" value="${paymentLink}" onchange="updatePaymentLink('${optionValue}', this.value)" placeholder="https://razorpay.me/@yourusername" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                    </div>
                 `;
                 container.appendChild(div);
             });
@@ -901,7 +943,9 @@
 
         async function addReferenceOption() {
             const input = document.getElementById('newReferenceValue');
+            const paymentLinkInput = document.getElementById('newReferencePaymentLink');
             const value = input.value.trim();
+            const paymentLink = paymentLinkInput.value.trim();
 
             if (!value) {
                 alert('Please enter a reference value');
@@ -914,13 +958,14 @@
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `action=add&value=${encodeURIComponent(value)}`
+                    body: `action=add&value=${encodeURIComponent(value)}&payment_link=${encodeURIComponent(paymentLink)}`
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
                     input.value = '';
+                    paymentLinkInput.value = '';
                     loadReferenceOptions();
                     showMessage(data.message, 'success');
                 } else {
@@ -931,8 +976,10 @@
             }
         }
 
-        async function updateReferenceOption(oldValue, newValue) {
-            if (oldValue === newValue) return;
+        async function updateReferenceOption(oldValue, newValue, paymentLink) {
+            if (oldValue === newValue && paymentLink === document.getElementById('payment_link_' + oldValue).getAttribute('data-original')) {
+                return;
+            }
 
             if (!newValue.trim()) {
                 showMessage('Reference value cannot be empty', 'error');
@@ -946,7 +993,7 @@
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `action=update&old_value=${encodeURIComponent(oldValue)}&new_value=${encodeURIComponent(newValue)}`
+                    body: `action=update&old_value=${encodeURIComponent(oldValue)}&new_value=${encodeURIComponent(newValue)}&payment_link=${encodeURIComponent(paymentLink)}`
                 });
 
                 const data = await response.json();
@@ -961,6 +1008,28 @@
             } catch (error) {
                 showMessage('Error updating reference option', 'error');
                 loadReferenceOptions();
+            }
+        }
+
+        async function updatePaymentLink(value, paymentLink) {
+            try {
+                const response = await fetch('{{ url_for('bio_ai.admin_reference_config') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=update_payment_link&value=${encodeURIComponent(value)}&payment_link=${encodeURIComponent(paymentLink)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Error updating payment link', 'error');
             }
         }
 
