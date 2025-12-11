@@ -52,7 +52,7 @@ def landing():
 
 
 # Unified Admin Routes
-@app.route('/admin/login', methods=['GET', 'POST'])
+@app.route('/forms/admin/login', methods=['GET', 'POST'])
 def admin_login():
     """Unified admin login for all forms"""
     if request.method == 'POST':
@@ -66,14 +66,14 @@ def admin_login():
     return render_template('admin_login.html')
 
 
-@app.route('/admin/logout')
+@app.route('/forms/admin/logout')
 def admin_logout():
     """Logout from admin panel"""
     session.pop('admin_logged_in', None)
     return redirect(url_for('landing'))
 
 
-@app.route('/admin')
+@app.route('/forms/admin')
 @admin_required
 def admin_dashboard():
     """Unified admin dashboard showing all bookings from all forms"""
@@ -110,7 +110,7 @@ def admin_dashboard():
                          form_filter=form_filter)
 
 
-@app.route('/admin/config/<form_name>')
+@app.route('/forms/admin/config/<form_name>')
 @admin_required
 def admin_config(form_name):
     """Configuration page for specific form"""
@@ -124,7 +124,7 @@ def admin_config(form_name):
         return redirect(url_for('admin_dashboard'))
 
 
-@app.route('/admin/delete_booking/<form_name>/<int:booking_id>', methods=['POST'])
+@app.route('/forms/admin/delete_booking/<form_name>/<int:booking_id>', methods=['POST'])
 @admin_required
 def admin_delete_booking(form_name, booking_id):
     """Delete booking from specific form"""

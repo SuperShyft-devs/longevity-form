@@ -241,8 +241,8 @@
         <div class="header-content">
             <h1>🎯 Unified Admin Dashboard</h1>
             <div class="header-actions">
-                <a href="/" class="btn btn-light">🏠 Home</a>
-                <a href="/admin/logout" class="btn btn-logout">🚪 Logout</a>
+                <a href="/forms" class="btn btn-light">🏠 Forms</a>
+                <a href="/forms/admin/logout" class="btn btn-logout">🚪 Logout</a>
             </div>
         </div>
     </div>
@@ -251,16 +251,16 @@
         <div class="filters">
             <h3>Filter by Form Type</h3>
             <div class="filter-buttons">
-                <a href="/admin?form=all" class="filter-btn {% if form_filter == 'all' %}active{% endif %}">
+                <a href="/forms/admin?form=all" class="filter-btn {% if form_filter == 'all' %}active{% endif %}">
                     📊 All Bookings
                 </a>
-                <a href="/admin?form=bio_ai" class="filter-btn {% if form_filter == 'bio_ai' %}active{% endif %}">
+                <a href="/forms/admin?form=bio_ai" class="filter-btn {% if form_filter == 'bio_ai' %}active{% endif %}">
                     🔬 Bio AI Premium
                 </a>
-                <a href="/admin?form=bio_ai_free" class="filter-btn {% if form_filter == 'bio_ai_free' %}active{% endif %}">
+                <a href="/forms/admin?form=bio_ai_free" class="filter-btn {% if form_filter == 'bio_ai_free' %}active{% endif %}">
                     🆓 Bio AI Free
                 </a>
-                <a href="/admin?form=camp" class="filter-btn {% if form_filter == 'camp' %}active{% endif %}">
+                <a href="/forms/admin?form=camp" class="filter-btn {% if form_filter == 'camp' %}active{% endif %}">
                     ⛺ Camp
                 </a>
             </div>
@@ -363,7 +363,7 @@
                 return;
             }
 
-            fetch(`/admin/delete_booking/${formType}/${bookingId}`, {
+            fetch(`/forms/admin/delete_booking/${formType}/${bookingId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
