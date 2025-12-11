@@ -196,14 +196,21 @@ def admin_config():
 
             is_valid, errors = ConfigValidator.validate_config(config_data)
             if not is_valid:
-                return render_template("camp/admin_config.html", config=config_manager.get_all(), errors=errors)
+                return render_template("camp/admin_config_new.html", config=config_manager.get_all(), errors=errors)
 
             config_manager.update_multiple(config_data)
-            return render_template("camp/admin_config.html", config=config_manager.get_all(), success="Configuration updated!")
+            return render_template("camp/admin_config_new.html", config=config_manager.get_all(), success="Configuration updated!")
         except Exception as e:
-            return render_template("camp/admin_config.html", config=config_manager.get_all(), errors=[f"Error: {str(e)}"])
+            return render_template("camp/admin_config_new.html", config=config_manager.get_all(), errors=[f"Error: {str(e)}"])
 
-    return render_template("camp/admin_config.html", config=config_manager.get_all())
+    return render_template("camp/admin_config_new.html", config=config_manager.get_all())
+
+
+@camp_bp.route("/admin/config/email-management")
+@admin_required
+def admin_email_management():
+    """Email recipients management page"""
+    return render_template("camp/admin_email_management.html")
 
 
 @camp_bp.route("/admin/config/reset", methods=["POST"])

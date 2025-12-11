@@ -301,14 +301,28 @@ def admin_config():
 
             is_valid, errors = ConfigValidator.validate_config(config_data)
             if not is_valid:
-                return render_template("bio_ai/admin_config.html", config=config_manager.get_all(), errors=errors)
+                return render_template("bio_ai/admin_config_new.html", config=config_manager.get_all(), errors=errors)
 
             config_manager.update_multiple(config_data)
-            return render_template("bio_ai/admin_config.html", config=config_manager.get_all(), success="Configuration updated successfully!")
+            return render_template("bio_ai/admin_config_new.html", config=config_manager.get_all(), success="Configuration updated successfully!")
         except Exception as e:
-            return render_template("bio_ai/admin_config.html", config=config_manager.get_all(), errors=[f"Error: {str(e)}"])
+            return render_template("bio_ai/admin_config_new.html", config=config_manager.get_all(), errors=[f"Error: {str(e)}"])
 
-    return render_template("bio_ai/admin_config.html", config=config_manager.get_all())
+    return render_template("bio_ai/admin_config_new.html", config=config_manager.get_all())
+
+
+@bio_ai_bp.route("/admin/config/reference-management")
+@admin_required
+def admin_reference_management():
+    """Reference options management page"""
+    return render_template("bio_ai/admin_reference_management.html")
+
+
+@bio_ai_bp.route("/admin/config/email-management")
+@admin_required
+def admin_email_management():
+    """Email recipients management page"""
+    return render_template("bio_ai/admin_email_management.html")
 
 
 @bio_ai_bp.route("/admin/config/reset", methods=["POST"])

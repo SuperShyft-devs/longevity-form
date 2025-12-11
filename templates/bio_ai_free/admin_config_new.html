@@ -1,0 +1,246 @@
+{% extends "shared/admin_config_base.html" %}
+
+{% set form_name = "Longevity Bio AI Free" %}
+{% set admin_url = url_for('bio_ai_free.admin') %}
+{% set reset_url = url_for('bio_ai_free.reset_config') %}
+
+{% block quick_links %}
+<div class="quick-links">
+    <a href="{{ url_for('bio_ai_free.admin_email_management') }}" class="quick-link-card">
+        <i class="fas fa-users quick-link-icon"></i>
+        <div class="quick-link-text">
+            <h5>Email Recipients</h5>
+            <p>Manage notification recipients</p>
+        </div>
+        <i class="fas fa-arrow-right" style="color: #999;"></i>
+    </a>
+</div>
+{% endblock %}
+
+{% block general_settings %}
+<!-- Date Configuration -->
+<div class="config-section">
+    <h4><i class="fas fa-calendar-check"></i> Date Configuration</h4>
+    <div class="config-grid-2">
+        <div class="form-group">
+            <label>Minimum Days Ahead</label>
+            <input type="number" name="minimum_days_ahead" value="{{ config.get('minimum_days_ahead', 2) }}"
+                min="0" max="30" required>
+            <small>Minimum number of days in advance users can book appointments</small>
+        </div>
+    </div>
+</div>
+
+<!-- Time Slot Configuration -->
+<div class="config-section">
+    <h4><i class="fas fa-clock"></i> Time Slot Configuration</h4>
+    <div class="config-grid-2">
+        <div class="form-group">
+            <label>Start Time</label>
+            <input type="time" name="slot_start_time" value="{{ config.get('slot_start_time', '06:00') }}" required>
+            <small>First time slot starts at this time</small>
+        </div>
+        <div class="form-group">
+            <label>End Time</label>
+            <input type="time" name="slot_end_time" value="{{ config.get('slot_end_time', '13:00') }}" required>
+            <small>Last time slot ends at this time</small>
+        </div>
+        <div class="form-group">
+            <label>Slot Duration (minutes)</label>
+            <input type="number" name="slot_duration" value="{{ config.get('slot_duration', 60) }}" 
+                min="15" max="240" step="15" required>
+            <small>Duration of each time slot in minutes</small>
+        </div>
+        <div class="form-group">
+            <label>Max People per Slot</label>
+            <input type="number" name="max_people_per_slot" value="{{ config.get('max_people_per_slot', 2) }}" 
+                min="1" max="10" required>
+            <small>Maximum number of people allowed per time slot</small>
+        </div>
+    </div>
+</div>
+
+<!-- Database Configuration -->
+<div class="config-section">
+    <h4><i class="fas fa-database"></i> Database Configuration</h4>
+    <div class="config-grid-2">
+        <div class="form-group">
+            <label>Database Name</label>
+            <input type="text" name="database_name" value="{{ config.get('database_name', 'bookings_bio_ai_free.db') }}" 
+                required disabled>
+            <small>Database file name (cannot be changed)</small>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block api_settings %}
+<!-- API Configuration -->
+<div class="config-section">
+    <h4><i class="fas fa-key"></i> Metsights API Configuration</h4>
+    <div class="toggle-group">
+        <label>
+            <input type="checkbox" id="api_enabled" name="api_enabled" value="true" 
+                {% if config.get('api_enabled', True) %}checked{% endif %}>
+            Enable API Integration
+        </label>
+        <small style="margin-top: 8px; display: block;">When disabled, API calls will be skipped during booking submission</small>
+    </div>
+    <div class="config-grid" id="api-config-fields">
+        <div class="form-group">
+            <label>API Key (Male)</label>
+            <input type="text" name="metsights_api_key_male" 
+                value="{{ config.get('metsights_api_key_male', '') }}" required>
+        </div>
+        <div class="form-group">
+            <label>API Key (Female)</label>
+            <input type="text" name="metsights_api_key_female" 
+                value="{{ config.get('metsights_api_key_female', '') }}" required>
+        </div>
+        <div class="form-group">
+            <label>Engagement ID (Male)</label>
+            <input type="text" name="engagement_id_male" 
+                value="{{ config.get('engagement_id_male', '') }}" required>
+        </div>
+        <div class="form-group">
+            <label>Engagement ID (Female)</label>
+            <input type="text" name="engagement_id_female" 
+                value="{{ config.get('engagement_id_female', '') }}" required>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block email_settings %}
+<!-- Email Configuration -->
+<div class="config-section">
+    <h4><i class="fas fa-envelope"></i> Email Notification Settings</h4>
+    <div class="toggle-group">
+        <label>
+            <input type="checkbox" id="email_enabled" name="email_enabled" value="true" 
+                {% if config.get('email_enabled', True) %}checked{% endif %} onchange="toggleEmailFields()">
+            Enable Email Notifications
+        </label>
+        <small style="margin-top: 8px; display: block;">Send email notifications to admin when new bookings are submitted</small>
+    </div>
+    <div class="config-grid" id="email-config-fields">
+        <div class="form-group">
+            <label>SMTP Server</label>
+            <input type="text" name="smtp_server" value="{{ config.get('smtp_server', 'smtp.gmail.com') }}" required>
+            <small>SMTP server for sending emails</small>
+        </div>
+        <div class="form-group">
+            <label>SMTP Port</label>
+            <input type="number" name="smtp_port" value="{{ config.get('smtp_port', 587) }}" required>
+            <small>Usually 587 for TLS or 465 for SSL</small>
+        </div>
+        <div class="form-group">
+            <label>Sender Email</label>
+            <input type="email" name="sender_email" value="{{ config.get('sender_email', '') }}" required>
+            <small>Email address to send from</small>
+        </div>
+        <div class="form-group">
+            <label>Sender Password (App Password)</label>
+            <input type="password" name="sender_password" value="{{ config.get('sender_password', '') }}" 
+                placeholder="Enter Gmail App Password">
+            <small>For Gmail, use App Password. <a href="https://support.google.com/accounts/answer/185833" target="_blank">Learn how</a></small>
+        </div>
+    </div>
+    
+    <div class="alert info-alert" style="margin-top: 16px;">
+        <i class="fas fa-info-circle"></i>
+        <div>
+            <strong>Manage Recipients:</strong> Go to <a href="{{ url_for('bio_ai_free.admin_email_management') }}">Email Recipients</a> page to add/remove notification recipients.
+        </div>
+    </div>
+    
+    <div style="margin-top: 16px;">
+        <button type="button" class="btn btn-secondary" onclick="testEmailConfiguration()">
+            <i class="fas fa-paper-plane"></i> Send Test Email
+        </button>
+        <div id="emailTestResult" style="margin-top: 10px;"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+// Toggle API configuration fields
+document.getElementById('api_enabled').addEventListener('change', function () {
+    const apiFields = document.getElementById('api-config-fields');
+    const inputs = apiFields.querySelectorAll('input');
+    if (this.checked) {
+        apiFields.style.opacity = '1';
+        inputs.forEach(input => input.disabled = false);
+    } else {
+        apiFields.style.opacity = '0.5';
+        inputs.forEach(input => input.disabled = true);
+    }
+});
+
+// Initialize toggle state on page load
+document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('api_enabled');
+    const apiFields = document.getElementById('api-config-fields');
+    const inputs = apiFields.querySelectorAll('input');
+    if (toggle.checked) {
+        apiFields.style.opacity = '1';
+        inputs.forEach(input => input.disabled = false);
+    } else {
+        apiFields.style.opacity = '0.5';
+        inputs.forEach(input => input.disabled = true);
+    }
+
+    toggleEmailFields();
+});
+
+function toggleEmailFields() {
+    const toggle = document.getElementById('email_enabled');
+    const emailFields = document.getElementById('email-config-fields');
+    const inputs = emailFields.querySelectorAll('input');
+    
+    if (toggle && emailFields) {
+        if (toggle.checked) {
+            emailFields.style.opacity = '1';
+            inputs.forEach(input => input.disabled = false);
+        } else {
+            emailFields.style.opacity = '0.5';
+            inputs.forEach(input => input.disabled = true);
+        }
+    }
+}
+
+async function testEmailConfiguration() {
+    const button = document.querySelector('button[onclick="testEmailConfiguration()"]');
+    const resultDiv = document.getElementById('emailTestResult');
+    
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    resultDiv.innerHTML = '<div style="color: #666;"><i class="fas fa-clock"></i> Testing email configuration...</div>';
+    
+    try {
+        const response = await fetch('{{ url_for('bio_ai_free.test_email') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            resultDiv.innerHTML = '<div style="color: #28a745;"><i class="fas fa-check-circle"></i> ' + data.message + '</div>';
+        } else {
+            resultDiv.innerHTML = '<div style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> ' + data.message + '</div>';
+        }
+    } catch (error) {
+        resultDiv.innerHTML = '<div style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> Error: ' + error.message + '</div>';
+    } finally {
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-paper-plane"></i> Send Test Email';
+        
+        setTimeout(() => {
+            resultDiv.innerHTML = '';
+        }, 5000);
+    }
+}
+{% endblock %}

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reference Options Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/admin.css') }}" rel="stylesheet">
+    <style>
+        .reference-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .reference-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .reference-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .reference-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .reference-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .add-reference-section {
+            background: #f0f8ff;
+            border: 2px dashed #007AFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .add-reference-section h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon-only {
+            padding: 8px 12px;
+            min-width: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 16px;
+        }
+
+        .alert {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-list" style="margin-right: 12px;"></i>Reference Options Management
+            </h1>
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <a href="{{ url_for('bio_ai.admin_config') }}" class="btn">
+                    <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>Back to Config
+                </a>
+                <a href="{{ url_for('bio_ai.admin') }}" class="btn btn-secondary">
+                    <i class="fas fa-chart-bar" style="margin-right: 8px;"></i>Admin Panel
+                </a>
+            </div>
+        </div>
+
+        <!-- Alert Message -->
+        <div id="alertMessage" class="alert">
+            <i class="fas fa-check-circle"></i>
+            <span id="alertText"></span>
+        </div>
+
+        <!-- Add New Reference Section -->
+        <div class="add-reference-section">
+            <h4><i class="fas fa-plus-circle"></i> Add New Reference Option</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Reference Name</label>
+                    <input type="text" id="newReferenceName" placeholder="e.g., Doctor A, Clinic B">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Payment Link (Optional)</label>
+                    <input type="url" id="newReferencePaymentLink" placeholder="https://razorpay.me/@username">
+                </div>
+                <button class="btn" onclick="addReference()" style="height: 42px;">
+                    <i class="fas fa-plus"></i> Add Reference
+                </button>
+            </div>
+        </div>
+
+        <!-- Reference List -->
+        <div id="referenceList">
+            <div class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading reference options...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let references = [];
+
+        // Load references on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReferences();
+        });
+
+        async function loadReferences() {
+            try {
+                const response = await fetch('{{ url_for('bio_ai.admin_reference_config') }}');
+                const data = await response.json();
+
+                if (data.success) {
+                    references = data.options;
+                    displayReferences();
+                } else {
+                    showAlert('Failed to load reference options', 'error');
+                }
+            } catch (error) {
+                showAlert('Error loading references: ' + error.message, 'error');
+            }
+        }
+
+        function displayReferences() {
+            const container = document.getElementById('referenceList');
+            
+            if (references.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-list"></i>
+                        <p>No reference options added yet. Add one above to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = references.map(ref => {
+                const name = typeof ref === 'string' ? ref : ref.value;
+                const paymentLink = typeof ref === 'string' ? '' : (ref.payment_link || '');
+                
+                return `
+                    <div class="reference-item" data-name="${name}">
+                        <div class="reference-header">
+                            <span class="reference-name">${name}</span>
+                            <div class="reference-actions">
+                                <button class="btn btn-icon-only" onclick="editReference('${name}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-icon-only" onclick="deleteReference('${name}')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Link</label>
+                            <input type="url" id="payment_${name}" value="${paymentLink}" 
+                                onblur="updatePaymentLink('${name}')" placeholder="https://razorpay.me/@username">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function addReference() {
+            const nameInput = document.getElementById('newReferenceName');
+            const paymentLinkInput = document.getElementById('newReferencePaymentLink');
+            
+            const name = nameInput.value.trim();
+            const paymentLink = paymentLinkInput.value.trim();
+
+            if (!name) {
+                showAlert('Please enter a reference name', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ url_for('bio_ai.admin_reference_config') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=add&value=${encodeURIComponent(name)}&payment_link=${encodeURIComponent(paymentLink)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    nameInput.value = '';
+                    paymentLinkInput.value = '';
+                    showAlert(data.message, 'success');
+                    await loadReferences();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error adding reference: ' + error.message, 'error');
+            }
+        }
+
+        async function updatePaymentLink(name) {
+            const input = document.getElementById('payment_' + name);
+            const paymentLink = input.value.trim();
+
+            try {
+                const response = await fetch('{{ url_for('bio_ai.admin_reference_config') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=update_payment_link&value=${encodeURIComponent(name)}&payment_link=${encodeURIComponent(paymentLink)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error updating payment link: ' + error.message, 'error');
+            }
+        }
+
+        function editReference(name) {
+            const newName = prompt('Enter new reference name:', name);
+            
+            if (newName && newName.trim() && newName !== name) {
+                updateReferenceName(name, newName.trim());
+            }
+        }
+
+        async function updateReferenceName(oldName, newName) {
+            const paymentLinkInput = document.getElementById('payment_' + oldName);
+            const paymentLink = paymentLinkInput ? paymentLinkInput.value.trim() : '';
+
+            try {
+                const response = await fetch('{{ url_for('bio_ai.admin_reference_config') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=update&old_value=${encodeURIComponent(oldName)}&new_value=${encodeURIComponent(newName)}&payment_link=${encodeURIComponent(paymentLink)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    await loadReferences();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error updating reference: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteReference(name) {
+            if (!confirm(`Are you sure you want to delete the reference "${name}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('{{ url_for('bio_ai.admin_reference_config') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=delete&value=${encodeURIComponent(name)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    await loadReferences();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Error deleting reference: ' + error.message, 'error');
+            }
+        }
+
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alertMessage');
+            const text = document.getElementById('alertText');
+            
+            text.textContent = message;
+            alert.className = 'alert show ' + (type === 'error' ? 'error' : '');
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
