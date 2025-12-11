@@ -20,7 +20,7 @@ from blueprints.camp import camp_bp
 
 # Register blueprints with URL prefixes
 app.register_blueprint(bio_ai_bp, url_prefix='/')
-app.register_blueprint(bio_ai_free_bp, url_prefix='/longevity-bio-ai-free')
+app.register_blueprint(bio_ai_free_bp, url_prefix='/longevity-bio-ai-93727-free')
 app.register_blueprint(camp_bp, url_prefix='/longevity-camp')
 
 
