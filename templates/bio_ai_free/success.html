@@ -24,54 +24,54 @@
 
             <h1 class="success-title">Booking Confirmed!</h1>
             {% for booking in bookings %}
-            <p class="booking-id">Booking ID: <strong>#{{ booking[0] }}</strong></p>
+            <p class="booking-id">Booking ID: <strong>#{{ booking.id or booking['id'] }}</strong></p>
             {% endfor %}
 
             {% for booking in bookings %}
             <div class="booking-details" style="margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
                 <div class="section-title">
                     <i class="fas fa-user"></i>
-                    Personal Information - {{ booking[1] }} {{ booking[2] }}
+                    Personal Information - {{ booking.first_name or booking['first_name'] }} {{ booking.last_name or booking['last_name'] }}
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">First Name:</span>
-                    <span class="detail-value">{{ booking[1] }}</span>
+                    <span class="detail-value">{{ booking.first_name or booking['first_name'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Last Name:</span>
-                    <span class="detail-value">{{ booking[2] }}</span>
+                    <span class="detail-value">{{ booking.last_name or booking['last_name'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Email:</span>
-                    <span class="detail-value">{{ booking[4] }}</span>
+                    <span class="detail-value">{{ booking.email or booking['email'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Phone:</span>
-                    <span class="detail-value">{{ booking[3] }}</span>
+                    <span class="detail-value">{{ booking.phone or booking['phone'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Age:</span>
-                    <span class="detail-value">{{ booking[5] }}</span>
+                    <span class="detail-value">{{ booking.age or booking['age'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Gender:</span>
-                    <span class="detail-value">{{ booking[6].title() }}</span>
+                    <span class="detail-value">{{ (booking.gender or booking['gender'])|title }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Address:</span>
-                    <span class="detail-value">{{ booking[7] or 'Not provided' }}</span>
+                    <span class="detail-value">{{ booking.address or booking['address'] or 'Not provided' }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Pin Code:</span>
-                    <span class="detail-value">{{ booking[8] or 'Not provided' }}</span>
+                    <span class="detail-value">{{ booking.pin_code or booking['pin_code'] or 'Not provided' }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Appointment Date:</span>
-                    <span class="detail-value">{{ booking[9] }}</span>
+                    <span class="detail-value">{{ booking.appointment_date or booking['appointment_date'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Time Slot:</span>
-                    <span class="detail-value">{{ booking[10] }}</span>
+                    <span class="detail-value">{{ booking.time_slot or booking['time_slot'] }}</span>
                 </div>
             </div>
             {% endfor %}

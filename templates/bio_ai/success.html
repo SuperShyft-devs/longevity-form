@@ -23,7 +23,7 @@
             </div>
 
             <h1 class="success-title">Booking Confirmed!</h1>
-            <p class="booking-id">Booking ID: <strong>#{{ booking[0] }}</strong></p>
+            <p class="booking-id">Booking ID: <strong>#{{ booking.id or booking['id'] }}</strong></p>
 
             <div class="booking-details">
                 <div class="section-title">
@@ -32,27 +32,27 @@
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">First Name:</span>
-                    <span class="detail-value">{{ booking[1] }}</span>
+                    <span class="detail-value">{{ booking.first_name or booking['first_name'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Last Name:</span>
-                    <span class="detail-value">{{ booking[2] }}</span>
+                    <span class="detail-value">{{ booking.last_name or booking['last_name'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Email:</span>
-                    <span class="detail-value">{{ booking[4] }}</span>
+                    <span class="detail-value">{{ booking.email or booking['email'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Phone:</span>
-                    <span class="detail-value">{{ booking[3] }}</span>
+                    <span class="detail-value">{{ booking.phone or booking['phone'] }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Appointment Date:</span>
-                    <span class="detail-value">{{ booking[7] }}</span>
+                    <span class="detail-value">{{ booking.appointment_date or booking['appointment_date'] }}</span>
                 </div>
             </div>
 
-            {% if booking[8] == 'yes' %}
+            {% if (booking.reference or booking['reference']) == 'yes' %}
             <div class="booking-details">
                 <div class="section-title">
                     <i class="fas fa-stethoscope"></i>
