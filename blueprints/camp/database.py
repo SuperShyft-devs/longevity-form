@@ -75,18 +75,21 @@ def save_booking(booking_data):
 def get_booking_by_id(booking_id):
     """Get booking details by ID"""
     conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     cursor.execute('SELECT * FROM bookings WHERE id = ?', (booking_id,))
-    booking = cursor.fetchone()
+    row = cursor.fetchone()
     conn.close()
     
-    return booking
+    # Convert Row object to dictionary
+    return dict(row) if row else None
 
 
 def get_all_bookings():
     """Get all bookings ordered by creation time"""
     conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     cursor.execute('''
@@ -94,9 +97,11 @@ def get_all_bookings():
         FROM bookings
         ORDER BY created_at DESC
     ''')
-    bookings = cursor.fetchall()
+    rows = cursor.fetchall()
     conn.close()
     
+    # Convert Row objects to dictionaries
+    bookings = [dict(row) for row in rows]
     return bookings
 
 
