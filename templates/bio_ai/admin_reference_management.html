@@ -148,6 +148,15 @@
             <span id="alertText"></span>
         </div>
 
+        <!-- Info Box -->
+        <div class="info-box" style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+            <p style="margin: 0; color: #1565c0; font-size: 14px;">
+                <i class="fas fa-info-circle"></i> 
+                <strong>How it works:</strong> Adding, editing, or deleting reference options saves immediately. 
+                For payment links, click the <strong>Save</strong> button next to each field to update.
+            </p>
+        </div>
+
         <!-- Add New Reference Section -->
         <div class="add-reference-section">
             <h4><i class="fas fa-plus-circle"></i> Add New Reference Option</h4>
@@ -231,8 +240,14 @@
                         </div>
                         <div class="form-group">
                             <label>Payment Link</label>
-                            <input type="url" id="payment_${name}" value="${paymentLink}" 
-                                onblur="updatePaymentLink('${name}')" placeholder="https://razorpay.me/@username">
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="url" id="payment_${name}" value="${paymentLink}" 
+                                    placeholder="https://razorpay.me/@username" style="flex: 1;">
+                                <button class="btn" onclick="updatePaymentLink('${name}')" 
+                                    style="padding: 10px 16px; white-space: nowrap;">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -278,6 +293,15 @@
         async function updatePaymentLink(name) {
             const input = document.getElementById('payment_' + name);
             const paymentLink = input.value.trim();
+            
+            // Find the button and show loading state
+            const button = event ? event.target.closest('button') : null;
+            const originalButtonHTML = button ? button.innerHTML : null;
+            
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            }
 
             try {
                 const response = await fetch('{{ url_for('bio_ai.admin_reference_config') }}', {
@@ -297,6 +321,11 @@
                 }
             } catch (error) {
                 showAlert('Error updating payment link: ' + error.message, 'error');
+            } finally {
+                if (button && originalButtonHTML) {
+                    button.disabled = false;
+                    button.innerHTML = originalButtonHTML;
+                }
             }
         }
 
