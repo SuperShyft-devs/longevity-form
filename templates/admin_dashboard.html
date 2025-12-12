@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unified Admin Dashboard - Longevity</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/svg" href="{{ url_for('static', filename='assets/company-logo.svg') }}">
     <style>
         * {
             margin: 0;
@@ -12,15 +14,101 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background - Dark Green Theme */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, #0a3d2e 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, #1a5940 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 20%, #0f4a36 0%, transparent 45%),
+                radial-gradient(ellipse at 30% 80%, #235f4d 0%, transparent 40%);
+            animation: backgroundShift 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -3;
+        }
+
+        /* Floating animated elements */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(16, 75, 57, 0.4) 0%, transparent 25%),
+                radial-gradient(circle at 85% 85%, rgba(26, 89, 64, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 70% 30%, rgba(35, 95, 77, 0.2) 0%, transparent 35%),
+                radial-gradient(circle at 25% 75%, rgba(20, 65, 50, 0.3) 0%, transparent 28%);
+            animation: floatingElements 20s linear infinite;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                filter: hue-rotate(0deg);
+            }
+            25% {
+                transform: scale(1.1) rotate(1deg);
+                filter: hue-rotate(5deg);
+            }
+            50% {
+                transform: scale(1.05) rotate(-0.5deg);
+                filter: hue-rotate(-3deg);
+            }
+            75% {
+                transform: scale(1.08) rotate(0.8deg);
+                filter: hue-rotate(8deg);
+            }
+        }
+
+        @keyframes floatingElements {
+            0% {
+                transform: translateX(-10px) translateY(-10px) scale(1);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translateX(15px) translateY(-5px) scale(1.05);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translateX(10px) translateY(20px) scale(0.98);
+                opacity: 0.35;
+            }
+            75% {
+                transform: translateX(-5px) translateY(15px) scale(1.02);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateX(-10px) translateY(-10px) scale(1);
+                opacity: 0.3;
+            }
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .header-content {
@@ -33,76 +121,130 @@
 
         .header h1 {
             font-size: 1.8em;
+            font-weight: 500;
+            background: linear-gradient(135deg, #52c4b0, #3fa896);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 i {
+            color: #52c4b0;
+            -webkit-text-fill-color: #52c4b0;
         }
 
         .header-actions {
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .btn {
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
         }
 
         .btn:hover {
-            opacity: 0.8;
+            transform: translateY(-2px);
         }
 
         .btn-light {
-            background: rgba(255,255,255,0.2);
-            color: white;
+            background: rgba(82, 196, 176, 0.2);
+            border: 1px solid rgba(82, 196, 176, 0.3);
+            color: #52c4b0;
+        }
+
+        .btn-light:hover {
+            background: rgba(82, 196, 176, 0.3);
+            box-shadow: 0 4px 15px rgba(82, 196, 176, 0.2);
         }
 
         .btn-logout {
-            background: #e74c3c;
-            color: white;
+            background: rgba(255, 138, 138, 0.2);
+            border: 1px solid rgba(255, 138, 138, 0.3);
+            color: #ff8a8a;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 138, 138, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 138, 138, 0.2);
         }
 
         .container {
             max-width: 1400px;
             margin: 30px auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .filters {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .filters h3 {
-            margin-bottom: 15px;
-            color: #333;
+            margin-bottom: 18px;
+            color: #ffffff;
+            font-size: 1.1em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filters h3 i {
+            color: #52c4b0;
         }
 
         .filter-buttons {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .filter-btn {
-            padding: 10px 20px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 5px;
+            padding: 12px 22px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
         }
 
-        .filter-btn:hover, .filter-btn.active {
-            background: #667eea;
-            color: white;
+        .filter-btn:hover {
+            background: rgba(82, 196, 176, 0.2);
+            border-color: rgba(82, 196, 176, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(82, 196, 176, 0.2);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #52c4b0, #3fa896);
+            border-color: #52c4b0;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(82, 196, 176, 0.3);
         }
 
         .stats-grid {
@@ -113,41 +255,63 @@
         }
 
         .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(82, 196, 176, 0.3);
         }
 
         .stat-card h3 {
-            color: #667eea;
-            font-size: 2.5em;
+            color: #52c4b0;
+            font-size: 2.8em;
             margin-bottom: 10px;
+            font-weight: 600;
         }
 
         .stat-card p {
-            color: #666;
-            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.05em;
+            font-weight: 400;
         }
 
         .bookings-section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .bookings-section h2 {
-            color: #333;
-            margin-bottom: 20px;
+            color: #ffffff;
+            margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 500;
+            font-size: 1.4em;
+        }
+
+        .bookings-section h2 span:last-child {
+            font-size: 0.5em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
         }
 
         .table-container {
             overflow-x: auto;
+            border-radius: 12px;
         }
 
         table {
@@ -156,68 +320,99 @@
         }
 
         th {
-            background: #667eea;
-            color: white;
-            padding: 12px;
+            background: rgba(82, 196, 176, 0.15);
+            color: #52c4b0;
+            padding: 14px 12px;
             text-align: left;
             font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(82, 196, 176, 0.3);
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95em;
         }
 
         tr:hover {
-            background: #f9f9f9;
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85em;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.8em;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .badge-bio-ai {
-            background: #FFD700;
-            color: #333;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
         }
 
         .badge-bio-ai-free {
-            background: #3498db;
-            color: white;
+            background: linear-gradient(135deg, #52c4b0, #3fa896);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(82, 196, 176, 0.3);
         }
 
         .badge-camp {
-            background: #2ecc71;
-            color: white;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
         }
 
         .btn-delete {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            background: rgba(255, 138, 138, 0.2);
+            border: 1px solid rgba(255, 138, 138, 0.3);
+            color: #ff8a8a;
+            padding: 8px 14px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-delete:hover {
-            background: #c0392b;
+            background: rgba(255, 138, 138, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 138, 138, 0.3);
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #999;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .empty-state-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
+            font-size: 5em;
+            margin-bottom: 25px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.5em;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .empty-state p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.05em;
         }
 
         @media (max-width: 768px) {
@@ -230,8 +425,25 @@
                 flex-direction: column;
             }
 
+            .filter-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
             table {
-                font-size: 0.9em;
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bookings-section {
+                padding: 20px;
             }
         }
     </style>
@@ -239,44 +451,44 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>🎯 Unified Admin Dashboard</h1>
+            <h1><i class="fas fa-chart-line"></i> Unified Admin Dashboard</h1>
             <div class="header-actions">
-                <a href="/forms" class="btn btn-light">🏠 Forms</a>
-                <a href="/forms/admin/logout" class="btn btn-logout">🚪 Logout</a>
+                <a href="/forms" class="btn btn-light"><i class="fas fa-home"></i> Forms</a>
+                <a href="/forms/admin/logout" class="btn btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
     </div>
 
     <div class="container">
         <div class="filters">
-            <h3>Filter by Form Type</h3>
+            <h3><i class="fas fa-filter"></i> Filter by Form Type</h3>
             <div class="filter-buttons">
                 <a href="/forms/admin?form=all" class="filter-btn {% if form_filter == 'all' %}active{% endif %}">
-                    📊 All Bookings
+                    <i class="fas fa-list"></i> All Bookings
                 </a>
                 <a href="/forms/admin?form=bio_ai" class="filter-btn {% if form_filter == 'bio_ai' %}active{% endif %}">
-                    🔬 Bio AI Premium
+                    <i class="fas fa-flask"></i> Bio AI Premium
                 </a>
                 <a href="/forms/admin?form=bio_ai_free" class="filter-btn {% if form_filter == 'bio_ai_free' %}active{% endif %}">
-                    🆓 Bio AI Free
+                    <i class="fas fa-gift"></i> Bio AI Free
                 </a>
                 <a href="/forms/admin?form=camp" class="filter-btn {% if form_filter == 'camp' %}active{% endif %}">
-                    ⛺ Camp
+                    <i class="fas fa-campground"></i> Camp
                 </a>
             </div>
         </div>
 
         <div class="filters">
-            <h3>⚙️ Form Configuration</h3>
+            <h3><i class="fas fa-cog"></i> Form Configuration</h3>
             <div class="filter-buttons">
-                <a href="{{ url_for('bio_ai.admin_config') }}" class="filter-btn" style="background: #FFD700; color: #333; border-color: #FFD700;">
-                    🔬 Bio AI Premium Config
+                <a href="{{ url_for('bio_ai.admin_config') }}" class="filter-btn" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border-color: #FFD700;">
+                    <i class="fas fa-flask"></i> Bio AI Premium Config
                 </a>
-                <a href="{{ url_for('bio_ai_free.admin_config') }}" class="filter-btn" style="background: #3498db; color: white; border-color: #3498db;">
-                    🆓 Bio AI Free Config
+                <a href="{{ url_for('bio_ai_free.admin_config') }}" class="filter-btn" style="background: linear-gradient(135deg, #52c4b0, #3fa896); color: white; border-color: #52c4b0;">
+                    <i class="fas fa-gift"></i> Bio AI Free Config
                 </a>
-                <a href="{{ url_for('camp.admin_config') }}" class="filter-btn" style="background: #2ecc71; color: white; border-color: #2ecc71;">
-                    ⛺ Camp Config
+                <a href="{{ url_for('camp.admin_config') }}" class="filter-btn" style="background: linear-gradient(135deg, #4CAF50, #45a049); color: white; border-color: #4CAF50;">
+                    <i class="fas fa-campground"></i> Camp Config
                 </a>
             </div>
         </div>
@@ -339,7 +551,7 @@
                             <td>{{ booking.created_at or booking[-1] or 'N/A' }}</td>
                             <td>
                                 <button class="btn-delete" onclick="deleteBooking('{{ form_type }}', {{ booking.id or booking[0] }})">
-                                    🗑️ Delete
+                                    <i class="fas fa-trash-alt"></i> Delete
                                 </button>
                             </td>
                         </tr>
@@ -349,7 +561,7 @@
             </div>
             {% else %}
             <div class="empty-state">
-                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
                 <h3>No bookings found</h3>
                 <p>There are no bookings matching your filter criteria.</p>
             </div>
