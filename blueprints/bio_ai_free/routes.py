@@ -211,7 +211,7 @@ def submit_booking():
             )
 
             # Admin notifications
-            phone_numbers = ["+918424029541", "+919602763481", "+917206239498"]
+            phone_numbers = ["8424029541", "9602763481", "7206239498", "9372799064", "7770081606"]
             for phone_number in phone_numbers:
                 send_msg(
                     CAMPAIGN_NAME="longevity_new_booking_submission_notification",
@@ -225,6 +225,7 @@ def submit_booking():
                         booking_data["gender"],
                         booking_data["address"],
                         booking_data["pin_code"],
+                        "HR",
                         booking_data["appointment_date"],
                         booking_data["time_slot"],
                     ],

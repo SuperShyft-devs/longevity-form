@@ -28,9 +28,9 @@ DEFAULT_CONFIG = {
     'email_enabled': True,
     'smtp_server': 'smtp.gmail.com',
     'smtp_port': 587,
-    'sender_email': 'pratheek.codimai@gmail.com',
-    'sender_password': 'pabw pqcj tbee tnpf',  # Will need to be set in admin config
-    'recipient_emails': ['amangupta73402@gmail.com']  # Multiple emails as array
+    'sender_email': 'aman.fitnastic@gmail.com',
+    'sender_password': 'jikc rgyy bvkg hvip',  # Will need to be set in admin config
+    'recipient_emails': ['support@supershyft.com', 'sunil.fitnastic@gmail.com', 'ronak.fitnastic@gmail.com', 'gaurav.fitnastic@gmail.com']  # Multiple emails as array
 }
 
 # Database Configuration
