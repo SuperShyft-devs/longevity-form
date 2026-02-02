@@ -89,14 +89,14 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="address">Address.</label>
-                    <input type="text" id="address" name="address" placeholder="Enter your address">
+                    <label for="address">Address *</label>
+                    <input type="text" id="address" name="address" required placeholder="Enter your address">
                     <div class="error-message" id="address_error"></div>
                 </div>
 
                 <div class="form-group">
-                    <label for="pin_code">Pincode</label>
-                    <input type="text" id="pin_code" name="pin_code" placeholder="Enter your Pincode" pattern="[0-9]{6}" maxlength="6">
+                    <label for="pin_code">Pincode *</label>
+                    <input type="text" id="pin_code" name="pin_code" required placeholder="Enter your Pincode" pattern="[0-9]{6}" maxlength="6">
                     <div class="error-message" id="pin_code_error"></div>
                 </div>
             </div>
@@ -420,8 +420,10 @@
                         return /^\d+$/.test(trimmed) && parseInt(trimmed) > 0;
                     case 'gender':
                         return trimmed === 'M' || trimmed === 'F';
+                    case 'address':
+                        return trimmed.length > 0;
                     case 'pin_code':
-                        return trimmed === '' || /^[0-9]{6}$/.test(trimmed);
+                        return /^[0-9]{6}$/.test(trimmed);
                     default:
                         return true;
                 }
@@ -430,7 +432,7 @@
             function checkFormValidity() {
                 const form = document.getElementById('bookingForm');
                 const formData = new FormData(form);
-                const requiredFields = ['first_name', "last_name", "phone", 'email', 'age', 'gender', 'appointment_date', 'time_slot'];
+                const requiredFields = ['first_name', "last_name", "phone", 'email', 'age', 'gender', 'address', 'pin_code', 'appointment_date', 'time_slot'];
 
                 let isValid = true;
 

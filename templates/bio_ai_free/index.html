@@ -99,14 +99,14 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="address_1">Address</label>
-                            <input type="text" id="address_1" name="members[1][address]" placeholder="Enter your address">
+                            <label for="address_1">Address *</label>
+                            <input type="text" id="address_1" name="members[1][address]" required placeholder="Enter your address">
                             <div class="error-message" id="address_1_error"></div>
                         </div>
 
                         <div class="form-group">
-                            <label for="pin_code_1">Pincode</label>
-                            <input type="text" id="pin_code_1" name="members[1][pin_code]" placeholder="Enter your Pincode" pattern="[0-9]{6}" maxlength="6">
+                            <label for="pin_code_1">Pincode *</label>
+                            <input type="text" id="pin_code_1" name="members[1][pin_code]" required placeholder="Enter your Pincode" pattern="[0-9]{6}" maxlength="6">
                             <div class="error-message" id="pin_code_1_error"></div>
                         </div>
                     </div>
@@ -524,14 +524,14 @@
 
                     <div class="form-row" id="address_row_${memberCount}" style="display: none;">
                         <div class="form-group">
-                            <label for="address_${memberCount}">Address</label>
-                            <input type="text" id="address_${memberCount}" name="members[${memberCount}][address]" placeholder="Enter address">
+                            <label for="address_${memberCount}">Address *</label>
+                            <input type="text" id="address_${memberCount}" name="members[${memberCount}][address]" required placeholder="Enter address">
                             <div class="error-message" id="address_${memberCount}_error"></div>
                         </div>
 
                         <div class="form-group">
-                            <label for="pin_code_${memberCount}">Pincode</label>
-                            <input type="text" id="pin_code_${memberCount}" name="members[${memberCount}][pin_code]" placeholder="Enter Pincode" pattern="[0-9]{6}" maxlength="6">
+                            <label for="pin_code_${memberCount}">Pincode *</label>
+                            <input type="text" id="pin_code_${memberCount}" name="members[${memberCount}][pin_code]" required placeholder="Enter Pincode" pattern="[0-9]{6}" maxlength="6">
                             <div class="error-message" id="pin_code_${memberCount}_error"></div>
                         </div>
                     </div>
@@ -791,8 +791,10 @@
                     return /^\d+$/.test(trimmed) && parseInt(trimmed) > 0;
                 case 'gender':
                     return trimmed === 'M' || trimmed === 'F';
+                case 'address':
+                    return trimmed.length > 0;
                 case 'pin_code':
-                    return trimmed === '' || /^[0-9]{6}$/.test(trimmed);
+                    return /^[0-9]{6}$/.test(trimmed);
                 default:
                     return true;
             }
@@ -814,7 +816,7 @@
 
             // Check all members personal info
             for (let i = 1; i <= memberCount; i++) {
-                const requiredFields = ['first_name', 'last_name', 'phone', 'email', 'age', 'gender'];
+                const requiredFields = ['first_name', 'last_name', 'phone', 'email', 'age', 'gender', 'address', 'pin_code'];
 
                 // Check personal info fields
                 requiredFields.forEach(field => {

@@ -70,14 +70,14 @@ def validate_booking_data(form_data):
         appointment_date = form_data.get('appointment_date', '').strip()
         time_slot = form_data.get('time_slot', '').strip()
 
-        # Optional fields
+        # Required fields (address and pincode)
         address = form_data.get('address', '').strip()
         pin_code = form_data.get('pin_code', '').strip()
 
         print(f"Debug: first_name='{first_name}', last_name='{last_name}', phone='{phone}', email='{email}', age_str='{age_str}', gender='{gender}', appointment_date='{appointment_date}', time_slot='{time_slot}'")
 
         # Validate required fields presence
-        if not all([first_name, last_name, email, age_str, gender, phone, appointment_date, time_slot]):
+        if not all([first_name, last_name, email, age_str, gender, phone, address, pin_code, appointment_date, time_slot]):
             print("Debug: Missing required fields")
             return False, 'Please fill in all required fields', None
 
@@ -133,8 +133,12 @@ def validate_booking_data(form_data):
             print(f"Debug: Time slot invalid: '{time_slot}'")
             return False, 'Invalid time slot format', None
 
-        # Validate Pincode (if provided, must be 6 digits)
-        if pin_code and not re.match(r'^[0-9]{6}$', pin_code):
+        # Validate address
+        if not address:
+            return False, 'Address is required', None
+
+        # Validate pincode: must be exactly 6 digits
+        if not re.match(r'^[0-9]{6}$', pin_code):
             print(f"Debug: Pincode invalid: '{pin_code}'")
             return False, 'Pincode must be exactly 6 digits', None
 
@@ -146,8 +150,8 @@ def validate_booking_data(form_data):
             'age': age,
             'gender': gender,
             'phone': phone,
-            'address': address if address else None,
-            'pin_code': pin_code if pin_code else None,
+            'address': address,
+            'pin_code': pin_code,
             'appointment_date': appointment_date,
             'time_slot': time_slot,
         }

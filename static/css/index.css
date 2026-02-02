@@ -669,7 +669,7 @@ body::after {
     margin-top: 16px;
 }
 
-.radio-option {
+.radio-label {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -681,11 +681,11 @@ body::after {
     border-radius: 8px;
 }
 
-.radio-option:hover {
+.radio-label:hover {
     background: rgba(255, 255, 255, 0.05);
 }
 
-.radio-option input[type="radio"] {
+.radio-label input[type="radio"] {
     width: 20px;
     height: 20px;
     margin: 0;
