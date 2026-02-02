@@ -72,12 +72,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gender">Gender *</label>
-                    <select id="gender" name="gender" required>
-                        <option value="">Select Gender</option>
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                    </select>
+                    <label>Gender *</label>
+                    <div class="radio-group" id="gender">
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="M" required>
+                            Male
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="F" required>
+                            Female
+                        </label>
+                    </div>
                     <div class="error-message" id="gender_error"></div>
                 </div>
             </div>
@@ -375,7 +380,7 @@
             // Fetch minimum days ahead from config
             let minimumDaysAhead = 2; // Default fallback
             try {
-                const configResponse = await fetch('{{ url_for('bio_ai.get_minimum_days_ahead') }}');
+                const configResponse = await fetch("{{ url_for('bio_ai.get_minimum_days_ahead') }}");
                 if (configResponse.ok) {
                     const configData = await configResponse.json();
                     minimumDaysAhead = configData.minimum_days_ahead || 2;
