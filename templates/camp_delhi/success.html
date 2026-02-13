@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Confirmed !</title>
+    <title>Booking Confirmed - Delhi Camp!</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/success.css') }}" rel="stylesheet">
     <link rel="icon" type="image/svg" href="{{ url_for('static', filename='assets/company-logo.svg') }}">
@@ -24,6 +24,7 @@
 
             <h1 class="success-title">Booking Confirmed!</h1>
             <p class="booking-id">Booking ID: <strong>#{{ booking.id or booking['id'] }}</strong></p>
+            <p class="location-info" style="text-align: center; color: #4CAF50; font-weight: bold;">Delhi Camp</p>
 
             <div class="booking-details">
                 <div class="section-title">

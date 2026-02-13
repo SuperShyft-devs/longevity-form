@@ -25,5 +25,17 @@ FORMS = {
         'description': 'Longevity camp registration',
         'database': 'bookings_camp.db',
         'config_file': 'config_camp.json'
+    },
+    'camp_delhi': {
+        'name': 'Longevity Camp - Delhi',
+        'description': 'Longevity camp registration for Delhi',
+        'database': 'bookings_camp_delhi.db',
+        'config_file': 'config_camp_delhi.json'
+    },
+    'camp_firozpur': {
+        'name': 'Longevity Camp - Firozpur',
+        'description': 'Longevity camp registration for Firozpur',
+        'database': 'bookings_camp_firozpur.db',
+        'config_file': 'config_camp_firozpur.json'
     }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Camp Registration</title>
+    <title>Health Camp Registration - Delhi</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
     <link rel="icon" type="image/svg" href="{{ url_for('static', filename='assets/company-logo.svg') }}">
@@ -15,7 +15,7 @@
         <div class="header">
             <img src="{{ url_for('static', filename='assets/company-logo.svg') }}" alt="Fitnastic Logo"
                 class="nvidia-logo">
-            <h1><b>Longevity Camp registration</b></h1>
+            <h1><b>Longevity Camp Registration - Delhi</b></h1>
             <p>Book your <b>Bio-Marker Sample Collection</b></p>
         </div>
 
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <form id="bookingForm" method="POST" action="{{ url_for('camp.submit_booking') }}" class="form-section">
+        <form id="bookingForm" method="POST" action="{{ url_for('camp_delhi.submit_booking') }}" class="form-section">
             <!-- Personal Information -->
             <div class="section-title">
                 <i class="fas fa-user"></i>

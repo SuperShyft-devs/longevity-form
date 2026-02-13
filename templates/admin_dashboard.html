@@ -370,6 +370,18 @@
             box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
         }
 
+        .badge-camp-delhi {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .badge-camp-firozpur {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+        }
+
         .btn-delete {
             background: rgba(255, 138, 138, 0.2);
             border: 1px solid rgba(255, 138, 138, 0.3);
@@ -472,8 +484,11 @@
                 <a href="/forms/admin?form=bio_ai_free" class="filter-btn {% if form_filter == 'bio_ai_free' %}active{% endif %}">
                     <i class="fas fa-gift"></i> Bio AI Free
                 </a>
-                <a href="/forms/admin?form=camp" class="filter-btn {% if form_filter == 'camp' %}active{% endif %}">
-                    <i class="fas fa-campground"></i> Camp
+                <a href="/forms/admin?form=camp_delhi" class="filter-btn {% if form_filter == 'camp_delhi' %}active{% endif %}">
+                    <i class="fas fa-campground"></i> Camp Delhi
+                </a>
+                <a href="/forms/admin?form=camp_firozpur" class="filter-btn {% if form_filter == 'camp_firozpur' %}active{% endif %}">
+                    <i class="fas fa-campground"></i> Camp Firozpur
                 </a>
             </div>
         </div>
@@ -487,8 +502,11 @@
                 <a href="{{ url_for('bio_ai_free.admin_config') }}" class="filter-btn" style="background: linear-gradient(135deg, #52c4b0, #3fa896); color: white; border-color: #52c4b0;">
                     <i class="fas fa-gift"></i> Bio AI Free Config
                 </a>
-                <a href="{{ url_for('camp.admin_config') }}" class="filter-btn" style="background: linear-gradient(135deg, #4CAF50, #45a049); color: white; border-color: #4CAF50;">
-                    <i class="fas fa-campground"></i> Camp Config
+                <a href="{{ url_for('camp_delhi.admin_config') }}" class="filter-btn" style="background: linear-gradient(135deg, #4CAF50, #45a049); color: white; border-color: #4CAF50;">
+                    <i class="fas fa-campground"></i> Camp Delhi Config
+                </a>
+                <a href="{{ url_for('camp_firozpur.admin_config') }}" class="filter-btn" style="background: linear-gradient(135deg, #2196F3, #1976D2); color: white; border-color: #2196F3;">
+                    <i class="fas fa-campground"></i> Camp Firozpur Config
                 </a>
             </div>
         </div>
@@ -539,8 +557,10 @@
                                 <span class="badge badge-bio-ai">Premium</span>
                                 {% elif form_type == 'bio_ai_free' %}
                                 <span class="badge badge-bio-ai-free">Free</span>
-                                {% elif form_type == 'camp' %}
-                                <span class="badge badge-camp">Camp</span>
+                                {% elif form_type == 'camp_delhi' %}
+                                <span class="badge badge-camp-delhi">Camp Delhi</span>
+                                {% elif form_type == 'camp_firozpur' %}
+                                <span class="badge badge-camp-firozpur">Camp Firozpur</span>
                                 {% endif %}
                             </td>
                             <td>{{ booking.first_name or booking[1] }} {{ booking.last_name or booking[2] }}</td>

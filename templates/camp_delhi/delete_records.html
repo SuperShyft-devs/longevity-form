@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Records - Delhi Camp</title>
+</head>
+<body>
+    <h1>Delete Records - Delhi Camp</h1>
+    
+    <a href="{{ url_for('camp_delhi.admin') }}">Back to Admin Panel</a>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% set latest_message = messages[-1] %}
+                <p><strong>{{ latest_message }}</strong></p>
+            
+        {% endif %}
+    {% endwith %}
+    
+    {% if bookings %}
+        <p>Total Records: {{ bookings|length }}</p>
+        
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Phone</th>
+                <th>Consultation</th>
+                <th>Created At</th>
+            </tr>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking['id'] }}</td>
+                <td>{{ booking['first_name'] }} {{ booking['last_name'] }}</td>
+                <td>{{ booking['email'] }}</td>
+                <td>{{ booking['age'] }}</td>
+                <td>{{ booking['gender'] }}</td>
+                <td>{{ booking['phone'] }}</td>
+                <td>{{ booking['doctor_consultation'] }}</td>
+                <td>{{ booking['created_at'] }}</td>
+
+                <td>
+                    <form method="POST" action="{{ url_for('camp_delhi.delete_booking', booking_id=booking['id']) }}" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Delete booking?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No records found.</p>
+    {% endif %}
+    
+    <br>
+    <a href="{{ url_for('camp_delhi.admin') }}">Back to Admin Panel</a>
+</body>
+</html>

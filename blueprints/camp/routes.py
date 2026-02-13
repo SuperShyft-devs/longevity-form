@@ -1,4 +1,5 @@
-# routes.py - Camp Blueprint Routes (Simpler, no time slots)
+# routes.py - Camp Blueprint Routes (Admin only - no public form)
+# The public form has been removed. Use /longevity-camp/delhi/ or /longevity-camp/firozpur/ instead.
 
 from flask import render_template, request, jsonify, redirect, url_for, session
 from datetime import datetime, timedelta
@@ -25,102 +26,11 @@ from .email_service import send_booking_notification_email, test_email_configura
 booking_manager = BookingManager()
 
 
-def send_to_api(booking_data):
-    print(f"[CAMP] Sending to API: {booking_data}")
-    try:
-        gender_map = {"male": 1, "female": 2, "Male": 1, "Female": 2, "M": 1, "F": 2, "m": 1, "f": 2}
-        payload = {
-            "first_name": booking_data["first_name"],
-            "last_name": booking_data["last_name"],
-            "phone": booking_data["phone"],
-            "email": booking_data["email"],
-            "age": int(booking_data["age"]),
-            "gender": gender_map.get(booking_data["gender"], 1),
-        }
-
-        if payload["gender"] == 1:
-            METSIGHTS_API_KEY = config_manager.get("metsights_api_key_male", "")
-            ENGAGEMENT_ID = config_manager.get("engagement_id_male", "")
-        elif payload["gender"] == 2:
-            METSIGHTS_API_KEY = config_manager.get("metsights_api_key_female", "")
-            ENGAGEMENT_ID = config_manager.get("engagement_id_female", "")
-
-        url = f"https://api.metsights.com/engagements/{ENGAGEMENT_ID}/register/"
-        headers = {"X-API-KEY": METSIGHTS_API_KEY, "Content-Type": "application/json"}
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
-
-        if response.ok:
-            print(f"[CAMP] API Success: {response.json()}")
-            return True
-        else:
-            print(f"[CAMP] API Error: {response.status_code} - {response.text}")
-            return False
-    except Exception as e:
-        print(f"[CAMP] API Exception: {str(e)}")
-        return False
-
-
-def send_email_async(booking_data):
-    try:
-        email_success = send_booking_notification_email(booking_data)
-        if email_success:
-            print("[CAMP] Booking notification email sent successfully (async)")
-        else:
-            print("[CAMP] Failed to send booking notification email (async)")
-    except Exception as e:
-        print(f"[CAMP] Exception in async email sending: {str(e)}")
-
-
-# Main Routes
+# Redirect root camp URL to forms page
 @camp_bp.route("/")
 def index():
-    """Main registration form"""
-    return render_template("camp/index.html")
-
-
-@camp_bp.route("/api/config/minimum_days_ahead")
-def get_minimum_days_ahead():
-    """API endpoint to get minimum days ahead configuration"""
-    minimum_days_ahead = int(config_manager.get("minimum_days_ahead", 2))
-    return jsonify({"minimum_days_ahead": minimum_days_ahead})
-
-
-@camp_bp.route("/booking_success/<int:booking_id>")
-def booking_success(booking_id):
-    """Display booking confirmation"""
-    booking = get_booking_by_id(booking_id)
-    if not booking:
-        return redirect(url_for('camp.index'))
-    return render_template("camp/success.html", booking=booking)
-
-
-@camp_bp.route("/submit_booking", methods=["POST"])
-def submit_booking():
-    try:
-        is_valid, error_message, booking_data = validate_booking_data(request.form)
-        if not is_valid:
-            return render_template("camp/error.html", message=error_message)
-
-        # Save booking first
-        booking_id = save_booking(booking_data)
-
-        # Send to API if enabled (non-blocking)
-        api_enabled = config_manager.get("api_enabled", True)
-        if api_enabled:
-            try:
-                if send_to_api(booking_data):
-                    print(f"[CAMP] Booking #{booking_id}: API integration successful")
-                else:
-                    print(f"[CAMP] Booking #{booking_id}: API integration failed (booking still saved)")
-            except Exception as api_error:
-                print(f"[CAMP] Booking #{booking_id}: API integration error - {str(api_error)}")
-
-        # Send email notification asynchronously
-        threading.Thread(target=send_email_async, args=(booking_data,)).start()
-
-        return redirect(url_for("camp.booking_success", booking_id=booking_id))
-    except Exception as e:
-        return render_template("camp/error.html", message=f"Unexpected error: {str(e)}")
+    """Redirect to forms page - camp form has been removed"""
+    return redirect("/forms")
 
 
 # Admin Routes
