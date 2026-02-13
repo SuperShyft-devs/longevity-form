@@ -1,5 +1,5 @@
 # routes.py - Camp Blueprint Routes (Admin only - no public form)
-# The public form has been removed. Use /longevity-camp/delhi/ or /longevity-camp/firozpur/ instead.
+# The public form has been removed. Use /camp/delhi/ or /camp/firozpur/ instead.
 
 from flask import render_template, request, jsonify, redirect, url_for, session
 from datetime import datetime, timedelta

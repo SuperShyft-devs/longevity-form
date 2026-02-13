@@ -15,8 +15,9 @@
         <div class="header">
             <img src="{{ url_for('static', filename='assets/company-logo.svg') }}" alt="Fitnastic Logo"
                 class="nvidia-logo">
-            <h1><b>Longevity Camp Registration - Firozpur</b></h1>
-            <p>Book your <b>Bio-Marker Sample Collection</b></p>
+            <h1><b>Longevity Camp Registration</b></h1>
+            <p><b>Welcome to the world of Bio AI technology.</b></p>
+            <b style="display: block; margin-top: 1rem;">Book your Bio-marker sample collection & schedule your personalised doctor consultation.</b>
         </div>
 
         <!-- Flash Messages -->
@@ -80,14 +81,14 @@
             </div>
 
 
-            <!-- Doctor Consultation -->
-            <div class="section-title" style="margin-top: 40px; display: none;">
+            <!-- Personalised Nutrition & Doctor Consultations -->
+            <div class="section-title" style="margin-top: 40px;">
                 <i class="fas fa-stethoscope"></i>
-                Doctor and  Nutrition Consultation
+                Personalised Nutrition & Doctor Consultation
             </div>
 
-            <div class="form-group" style="display: none;">
-                <label>Do you want to book a Doctor and Nutrition Consultation after your health checkup?</label>
+            <div class="form-group">
+                <label>Would you like a Personalized Nutrition plan along with a Doctor consultation? *</label>
                 <div class="radio-group">
                     <label class="radio-label">
                         <input type="radio" name="doctor_consultation" value="Yes" checked>
@@ -95,7 +96,7 @@
                     </label>
                     <label class="radio-label">
                         <input type="radio" name="doctor_consultation" value="No">
-                        <span>Not Required</span>
+                        <span>No</span>
                     </label>
                 </div>
                 <div class="error-message" id="doctor_consultation_error"></div>

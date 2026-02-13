@@ -23,9 +23,9 @@ from blueprints.camp_firozpur import camp_firozpur_bp
 # Register blueprints with URL prefixes
 app.register_blueprint(bio_ai_bp, url_prefix='/')
 app.register_blueprint(bio_ai_free_bp, url_prefix='/longevity-bio-ai-93727-free')
-app.register_blueprint(camp_bp, url_prefix='/longevity-camp')
-app.register_blueprint(camp_delhi_bp, url_prefix='/longevity-camp/delhi')
-app.register_blueprint(camp_firozpur_bp, url_prefix='/longevity-camp/firozpur')
+app.register_blueprint(camp_bp, url_prefix='/camp')
+app.register_blueprint(camp_delhi_bp, url_prefix='/camp/delhi')
+app.register_blueprint(camp_firozpur_bp, url_prefix='/camp/firozpur')
 
 
 # Forms landing page (moved from root)
