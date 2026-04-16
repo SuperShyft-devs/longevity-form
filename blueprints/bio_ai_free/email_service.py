@@ -139,6 +139,10 @@ def create_booking_email_body(booking_data):
                     <span class="label">Address:</span> 
                     <span class="value">{booking_data.get('address', 'Not provided')}</span>
                 </div>
+                <div class="field">
+                    <span class="label">Pincode:</span> 
+                    <span class="value">{booking_data.get('pin_code') or 'Not provided'}</span>
+                </div>
                 
                 <h3>📅 Appointment Details</h3>
                 <div class="field">
@@ -189,6 +193,7 @@ def test_email_configuration():
             'age': '25',
             'gender': 'M',
             'address': 'Test Address',
+            'pin_code': '400066',
             'appointment_date': '2024-12-01',
             'time_slot': '09:00'
         }

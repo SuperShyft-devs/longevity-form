@@ -338,6 +338,18 @@
             font-size: 0.95em;
         }
 
+        .cell-long {
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: top;
+        }
+
+        .cell-empty {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
         tr:hover {
             background: rgba(255, 255, 255, 0.05);
         }
@@ -517,7 +529,7 @@
                 <p>Total Bookings</p>
             </div>
             <div class="stat-card">
-                <h3>3</h3>
+                <h3>4</h3>
                 <p>Active Forms</p>
             </div>
             <div class="stat-card">
@@ -544,14 +556,27 @@
                             <th>Email</th>
                             <th>Age</th>
                             <th>Gender</th>
-                            <th>Date</th>
+                            <th>Address</th>
+                            <th>Pincode</th>
+                            <th>Reference</th>
+                            <th>Appt. date</th>
+                            <th>Time slot</th>
+                            <th>Dr. consult</th>
+                            <th>Submitted</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for booking, form_type in bookings %}
+                        {% set nm = (booking.get('first_name', '') ~ ' ' ~ booking.get('last_name', '')).strip() %}
+                        {% set addr = booking.get('address') %}
+                        {% set pin = booking.get('pin_code') %}
+                        {% set ref = booking.get('reference') %}
+                        {% set appt = booking.get('appointment_date') %}
+                        {% set slot = booking.get('time_slot') %}
+                        {% set doc = booking.get('doctor_consultation') %}
                         <tr>
-                            <td>#{{ booking.id or booking[0] }}</td>
+                            <td>#{{ booking.get('id') }}</td>
                             <td>
                                 {% if form_type == 'bio_ai' %}
                                 <span class="badge badge-bio-ai">Premium</span>
@@ -563,14 +588,20 @@
                                 <span class="badge badge-camp-firozpur">Camp Firozpur</span>
                                 {% endif %}
                             </td>
-                            <td>{{ booking.first_name or booking[1] }} {{ booking.last_name or booking[2] }}</td>
-                            <td>{{ booking.phone or booking[3] }}</td>
-                            <td>{{ booking.email or booking[4] }}</td>
-                            <td>{{ booking.age or booking[5] }}</td>
-                            <td>{{ booking.gender or booking[6] }}</td>
-                            <td>{{ booking.created_at or booking[-1] or 'N/A' }}</td>
+                            <td>{{ nm or '—' }}</td>
+                            <td>{{ booking.get('phone') or '—' }}</td>
+                            <td>{{ booking.get('email') or '—' }}</td>
+                            <td>{{ booking.get('age', '—') }}</td>
+                            <td>{% set g = booking.get('gender') %}{% if g == 'M' %}Male{% elif g == 'F' %}Female{% else %}{{ g or '—' }}{% endif %}</td>
+                            <td class="cell-long" title="{{ addr or '' }}">{% if addr %}{{ addr }}{% else %}<span class="cell-empty">—</span>{% endif %}</td>
+                            <td>{% if pin %}{{ pin }}{% else %}<span class="cell-empty">—</span>{% endif %}</td>
+                            <td class="cell-long" title="{{ ref or '' }}">{% if ref %}{{ ref }}{% else %}<span class="cell-empty">—</span>{% endif %}</td>
+                            <td>{% if appt %}{{ appt }}{% else %}<span class="cell-empty">—</span>{% endif %}</td>
+                            <td>{% if slot %}{{ slot }}{% else %}<span class="cell-empty">—</span>{% endif %}</td>
+                            <td>{% if doc %}{{ doc }}{% else %}<span class="cell-empty">—</span>{% endif %}</td>
+                            <td>{{ booking.get('created_at') or '—' }}</td>
                             <td>
-                                <button class="btn-delete" onclick="deleteBooking('{{ form_type }}', {{ booking.id or booking[0] }})">
+                                <button class="btn-delete" onclick="deleteBooking('{{ form_type }}', {{ booking.get('id') }})">
                                     <i class="fas fa-trash-alt"></i> Delete
                                 </button>
                             </td>

@@ -6,7 +6,7 @@ from typing import List, Dict, Any
 
 # Flask Configuration
 SECRET_KEY = 'your-secret-key-change-this'  # Change this in production
-ADMIN_PASSWORD = 'admin123'  # Change this to your desired password
+ADMIN_PASSWORD = '4*U8.@N|b$c3HCeq'  # Change this to your desired password
 
 # Configuration file path
 CONFIG_FILE = 'config_bio_ai_free.json'

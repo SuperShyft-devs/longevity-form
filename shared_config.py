@@ -4,7 +4,7 @@ import os
 
 # Flask Configuration
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-this-in-production')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')  # Change this in production
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '4*U8.@N|b$c3HCeq')  # Change this in production
 
 # Form identifiers
 FORMS = {
