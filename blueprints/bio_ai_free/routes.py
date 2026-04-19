@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import requests
 import threading
 
+from metsights_profiles import profiles_api_configured, sync_booking_to_metsights
+
 from . import bio_ai_free_bp
 from .config import config_manager, reload_config, ADMIN_PASSWORD
 from .whatsapp_integration import send_msg
@@ -25,10 +27,18 @@ from .email_service import send_booking_notification_email, test_email_configura
 booking_manager = BookingManager()
 
 
-def send_to_api(booking_data):
-    print(f"[BIO-AI-FREE] Sending to API: {booking_data}")
+def _send_metsights_engagement_register(booking_data):
+    """Legacy flow: POST /engagements/{id}/register/ using per-gender keys from admin config."""
+    print(f"[BIO-AI-FREE] Sending to engagement API: {booking_data}")
     try:
-        gender_map = {"male": 1, "female": 2, "Male": 1, "Female": 2}
+        gender_map = {
+            "M": 1,
+            "F": 2,
+            "male": 1,
+            "female": 2,
+            "Male": 1,
+            "Female": 2,
+        }
         payload = {
             "first_name": booking_data["first_name"],
             "last_name": booking_data["last_name"],
@@ -50,14 +60,27 @@ def send_to_api(booking_data):
         response = requests.post(url, json=payload, headers=headers, timeout=10)
 
         if response.ok:
-            print(f"[BIO-AI-FREE] API Success: {response.json()}")
+            print(f"[BIO-AI-FREE] Engagement API success: {response.json()}")
             return True
-        else:
-            print(f"[BIO-AI-FREE] API Error: {response.status_code} - {response.text}")
-            return False
-    except Exception as e:
-        print(f"[BIO-AI-FREE] API Exception: {str(e)}")
+        print(f"[BIO-AI-FREE] Engagement API error: {response.status_code} - {response.text}")
         return False
+    except Exception as e:
+        print(f"[BIO-AI-FREE] Engagement API exception: {str(e)}")
+        return False
+
+
+def send_to_api(booking_data):
+    """
+    B2B/HR form: MetSights Profiles API — MetSights Pro record — when METSIGHTS_API_KEY is set.
+    Otherwise falls back to engagement register.
+    """
+    if profiles_api_configured():
+        ok = sync_booking_to_metsights(booking_data, assessment_type="2")
+        if ok:
+            return True
+        print("[BIO-AI-FREE] Profiles API failed; falling back to engagement register if configured.")
+
+    return _send_metsights_engagement_register(booking_data)
 
 
 def send_email_async(booking_data):
@@ -184,7 +207,7 @@ def submit_booking():
             if not is_valid:
                 return render_template("bio_ai_free/error.html", message=f"Validation error: {error_message}")
 
-            if api_enabled:
+            if api_enabled or profiles_api_configured():
                 if not send_to_api(booking_data):
                     return render_template("bio_ai_free/error.html", message="Failed to send to API")
 
