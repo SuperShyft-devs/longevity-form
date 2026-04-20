@@ -50,11 +50,6 @@ def save_booking(booking_data):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # 🔹 Get the highest id and add 1
-    cursor.execute("SELECT COALESCE(MAX(id), 0) + 1 FROM bookings")
-    booking_id = cursor.fetchone()[0]
-
-    
     cursor.execute('''
         INSERT INTO bookings (
             first_name, last_name, phone, email, age, gender, doctor_consultation
@@ -64,11 +59,11 @@ def save_booking(booking_data):
         booking_data['email'], booking_data['age'], booking_data['gender'],
         booking_data.get('doctor_consultation', 'Yes')
     ))
-    
+
     conn.commit()
-    # booking_id = cursor.lastrowid
+    booking_id = cursor.lastrowid
     conn.close()
-    
+
     return booking_id
 
 
