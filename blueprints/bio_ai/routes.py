@@ -190,78 +190,89 @@ def booking_success(booking_id):
 
 @bio_ai_bp.route("/submit_booking", methods=["POST"])
 def submit_booking():
+    booking_id = None
     try:
         is_valid, error_message, booking_data = validate_booking_data(request.form)
         if not is_valid:
-            return render_template("bio_ai/error.html", message=error_message)
+            print(f"[BIO-AI] Validation failed (redirecting, no error page): {error_message}")
+            return redirect(url_for("bio_ai.index"))
 
-        # External Metsights: run when admin enables legacy API, or whenever org Profiles API key is in .env
-        api_enabled = config_manager.get("api_enabled", True)
-        if api_enabled or profiles_api_configured():
-            if not send_to_api(booking_data):
-                return render_template("bio_ai/error.html", message="Failed to send to API")
-
-        # Send to reference API if conditions met
-        reference_api_enabled = config_manager.get("reference_api_enabled", False)
-        reference_api_trigger_options = config_manager.get("reference_api_trigger_options", [])
-        if reference_api_enabled and booking_data.get("reference") in reference_api_trigger_options:
-            if not send_to_api(booking_data, api_type='reference'):
-                print("[BIO-AI] Warning: Failed to send to reference API")
-
-        # Save booking
         booking_id = save_booking(booking_data)
 
-        # Send email notification asynchronously
-        threading.Thread(target=send_email_async, args=(booking_data,)).start()
+        try:
+            api_enabled = config_manager.get("api_enabled", True)
+            if api_enabled or profiles_api_configured():
+                try:
+                    if send_to_api(booking_data):
+                        print(f"[BIO-AI] Booking #{booking_id}: MetSights / engagement sync OK")
+                    else:
+                        print(
+                            f"[BIO-AI] Booking #{booking_id}: MetSights / engagement sync failed — "
+                            "booking was saved; check API keys, MetSights billing, or admin API toggle."
+                        )
+                except Exception as api_error:
+                    print(f"[BIO-AI] Booking #{booking_id}: MetSights sync exception (booking saved): {api_error}")
 
-        # Send WhatsApp messages
-        send_msg(
-            CAMPAIGN_NAME="longevity-welcome",
-            destination_phone=booking_data["phone"],
-            templateParams=[booking_data["first_name"] + " " + booking_data["last_name"]],
-        )
-        send_msg(
-            CAMPAIGN_NAME="longevity-registering",
-            destination_phone=booking_data["phone"],
-            templateParams=[
-                booking_data["first_name"],
-                booking_data["appointment_date"],
-                booking_data["time_slot"],
-                "-",
-            ],
-        )
+            reference_api_enabled = config_manager.get("reference_api_enabled", False)
+            reference_api_trigger_options = config_manager.get("reference_api_trigger_options", [])
+            if reference_api_enabled and booking_data.get("reference") in reference_api_trigger_options:
+                try:
+                    if not send_to_api(booking_data, api_type='reference'):
+                        print("[BIO-AI] Warning: Failed to send to reference API")
+                except Exception as ref_err:
+                    print(f"[BIO-AI] Reference API exception (ignored): {ref_err}")
 
-        # Admin notifications
-        phone_numbers = ["+918424029541", "+919602763481", "+917206239498"]
-        for phone_number in phone_numbers:
+            threading.Thread(target=send_email_async, args=(booking_data,)).start()
+
             send_msg(
-                CAMPAIGN_NAME="longevity_new_booking_submission_notification",
-                destination_phone=phone_number,
+                CAMPAIGN_NAME="longevity-welcome",
+                destination_phone=booking_data["phone"],
+                templateParams=[booking_data["first_name"] + " " + booking_data["last_name"]],
+            )
+            send_msg(
+                CAMPAIGN_NAME="longevity-registering",
+                destination_phone=booking_data["phone"],
                 templateParams=[
                     booking_data["first_name"],
-                    booking_data["last_name"],
-                    booking_data["phone"],
-                    booking_data["email"],
-                    booking_data["age"],
-                    booking_data["gender"],
-                    booking_data["address"],
-                    booking_data["pin_code"],
-                    booking_data["reference"],
                     booking_data["appointment_date"],
                     booking_data["time_slot"],
+                    "-",
                 ],
             )
 
-        # Get payment link based on reference option
-        payment_link = get_payment_link_for_reference(booking_data.get("reference"))
-        if payment_link:
-            return redirect(payment_link)
-        else:
-            # Default payment link if no specific link is configured
+            phone_numbers = ["+918424029541", "+919602763481", "+917206239498"]
+            for phone_number in phone_numbers:
+                send_msg(
+                    CAMPAIGN_NAME="longevity_new_booking_submission_notification",
+                    destination_phone=phone_number,
+                    templateParams=[
+                        booking_data["first_name"],
+                        booking_data["last_name"],
+                        booking_data["phone"],
+                        booking_data["email"],
+                        booking_data["age"],
+                        booking_data["gender"],
+                        booking_data["address"],
+                        booking_data["pin_code"],
+                        booking_data["reference"],
+                        booking_data["appointment_date"],
+                        booking_data["time_slot"],
+                    ],
+                )
+
+            payment_link = get_payment_link_for_reference(booking_data.get("reference"))
+            if payment_link:
+                return redirect(payment_link)
             default_link = config_manager.get('default_payment_link', 'https://razorpay.me/@fitnastic')
             return redirect(default_link)
+        except Exception as post_err:
+            print(f"[BIO-AI] Post-save steps failed (booking #{booking_id} is saved): {post_err}")
+            return redirect(url_for("bio_ai.booking_success", booking_id=booking_id))
     except Exception as e:
-        return render_template("bio_ai/error.html", message=f"Unexpected error: {str(e)}")
+        print(f"[BIO-AI] submit_booking: {e}")
+        if booking_id is not None:
+            return redirect(url_for("bio_ai.booking_success", booking_id=booking_id))
+        return redirect(url_for("bio_ai.index"))
 
 
 # Admin Routes

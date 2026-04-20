@@ -10,9 +10,18 @@ SHIPYAARI_API_KEY = os.getenv("SHIPYAARI_API_KEY")
 user_name = "Fitnastic"
 
 
+def _whatsapp_sending_enabled() -> bool:
+    v = (os.getenv("WHATSAPP_NOTIFICATIONS_ENABLED") or "true").strip().lower()
+    return v not in ("0", "false", "no", "off")
+
+
 def send_msg(CAMPAIGN_NAME, destination_phone, templateParams):
     if not SHIPYAARI_API_KEY:
         return "Error: SHIPYAARI_API_KEY is not set on the server.", 500
+
+    if not _whatsapp_sending_enabled():
+        print("[Shipyaari/WhatsApp] Skipped (WHATSAPP_NOTIFICATIONS_ENABLED is off)")
+        return False
 
     try:
         # 1. Get user data from your form
@@ -38,9 +47,15 @@ def send_msg(CAMPAIGN_NAME, destination_phone, templateParams):
             # Redirect to a 'thank you' page
             return True
         else:
-            # Show an error if something went wrong
-            print(f"Error sending message. Status: {response.status_code}")
-            print(f"Response Body: {response.text}")
+            detail = ""
+            try:
+                body = response.json()
+                if isinstance(body, dict) and body.get("errorMessage"):
+                    detail = f" — {body.get('errorMessage')}"
+            except Exception:
+                pass
+            print(f"[Shipyaari/WhatsApp] Send failed (status {response.status_code}){detail}")
+            print(f"[Shipyaari/WhatsApp] Response: {response.text}")
             return False
 
     except requests.exceptions.RequestException as e:

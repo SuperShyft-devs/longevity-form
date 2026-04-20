@@ -194,70 +194,93 @@ def booking_success(booking_ids):
 
 @bio_ai_free_bp.route("/submit_booking", methods=["POST"])
 def submit_booking():
+    booking_ids = []
     try:
         members = parse_members_from_form(request.form)
         if not members:
-            return render_template("bio_ai_free/error.html", message="No member data found")
+            print("[BIO-AI-FREE] No member data in form (redirecting, no error page)")
+            return redirect(url_for("bio_ai_free.index"))
 
-        booking_ids = []
         api_enabled = config_manager.get("api_enabled", True)
 
         for member_data in members:
-            is_valid, error_message, booking_data = validate_booking_data(member_data)
-            if not is_valid:
-                return render_template("bio_ai_free/error.html", message=f"Validation error: {error_message}")
+            try:
+                is_valid, error_message, booking_data = validate_booking_data(member_data)
+                if not is_valid:
+                    print(f"[BIO-AI-FREE] Validation failed (redirecting, no error page): {error_message}")
+                    if booking_ids:
+                        break
+                    return redirect(url_for("bio_ai_free.index"))
 
-            if api_enabled or profiles_api_configured():
-                if not send_to_api(booking_data):
-                    return render_template("bio_ai_free/error.html", message="Failed to send to API")
+                booking_id = save_booking(booking_data)
+                booking_ids.append(booking_id)
 
-            booking_id = save_booking(booking_data)
-            booking_ids.append(booking_id)
+                try:
+                    if api_enabled or profiles_api_configured():
+                        try:
+                            if send_to_api(booking_data):
+                                print(f"[BIO-AI-FREE] Booking #{booking_id}: MetSights / engagement sync OK")
+                            else:
+                                print(
+                                    f"[BIO-AI-FREE] Booking #{booking_id}: MetSights / engagement sync failed — "
+                                    "booking was saved; check API keys or MetSights billing."
+                                )
+                        except Exception as api_error:
+                            print(f"[BIO-AI-FREE] Booking #{booking_id}: MetSights sync exception (booking saved): {api_error}")
 
-            threading.Thread(target=send_email_async, args=(booking_data,)).start()
+                    threading.Thread(target=send_email_async, args=(booking_data,)).start()
 
-            # WhatsApp notifications
-            send_msg(
-                CAMPAIGN_NAME="longevity-welcome",
-                destination_phone=booking_data["phone"],
-                templateParams=[booking_data["first_name"] + " " + booking_data["last_name"]],
-            )
-            send_msg(
-                CAMPAIGN_NAME="user_registration_notification",
-                destination_phone=booking_data["phone"],
-                templateParams=[
-                    booking_data["first_name"] + " " + booking_data["last_name"],
-                    booking_data["appointment_date"],
-                    booking_data["time_slot"],
-                    "-"
-                ],
-            )
+                    send_msg(
+                        CAMPAIGN_NAME="longevity-welcome",
+                        destination_phone=booking_data["phone"],
+                        templateParams=[booking_data["first_name"] + " " + booking_data["last_name"]],
+                    )
+                    send_msg(
+                        CAMPAIGN_NAME="user_registration_notification",
+                        destination_phone=booking_data["phone"],
+                        templateParams=[
+                            booking_data["first_name"] + " " + booking_data["last_name"],
+                            booking_data["appointment_date"],
+                            booking_data["time_slot"],
+                            "-"
+                        ],
+                    )
 
-            # Admin notifications
-            phone_numbers = ["8424029541", "9602763481", "7206239498", "9372799064", "7770081606"]
-            for phone_number in phone_numbers:
-                send_msg(
-                    CAMPAIGN_NAME="longevity_new_booking_submission_notification",
-                    destination_phone=phone_number,
-                    templateParams=[
-                        booking_data["first_name"],
-                        booking_data["last_name"],
-                        booking_data["phone"],
-                        booking_data["email"],
-                        booking_data["age"],
-                        booking_data["gender"],
-                        booking_data["address"],
-                        booking_data["pin_code"],
-                        "HR",
-                        booking_data["appointment_date"],
-                        booking_data["time_slot"],
-                    ],
-                )
+                    phone_numbers = ["8424029541", "9602763481", "7206239498", "9372799064", "7770081606"]
+                    for phone_number in phone_numbers:
+                        send_msg(
+                            CAMPAIGN_NAME="longevity_new_booking_submission_notification",
+                            destination_phone=phone_number,
+                            templateParams=[
+                                booking_data["first_name"],
+                                booking_data["last_name"],
+                                booking_data["phone"],
+                                booking_data["email"],
+                                booking_data["age"],
+                                booking_data["gender"],
+                                booking_data["address"],
+                                booking_data["pin_code"],
+                                "HR",
+                                booking_data["appointment_date"],
+                                booking_data["time_slot"],
+                            ],
+                        )
+                except Exception as member_post_err:
+                    print(f"[BIO-AI-FREE] Post-save steps failed for booking #{booking_id} (row saved): {member_post_err}")
+            except Exception as member_err:
+                print(f"[BIO-AI-FREE] Member row failed (may be partial): {member_err}")
+                continue
 
-        booking_ids_str = ",".join(map(str, booking_ids))
-        return redirect(url_for("bio_ai_free.booking_success", booking_ids=booking_ids_str))
+        if booking_ids:
+            booking_ids_str = ",".join(map(str, booking_ids))
+            return redirect(url_for("bio_ai_free.booking_success", booking_ids=booking_ids_str))
+        return redirect(url_for("bio_ai_free.index"))
     except Exception as e:
-        return render_template("bio_ai_free/error.html", message=f"Unexpected error: {str(e)}")
+        print(f"[BIO-AI-FREE] submit_booking: {e}")
+        if booking_ids:
+            booking_ids_str = ",".join(map(str, booking_ids))
+            return redirect(url_for("bio_ai_free.booking_success", booking_ids=booking_ids_str))
+        return redirect(url_for("bio_ai_free.index"))
 
 
 # Admin Routes
